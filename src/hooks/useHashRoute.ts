@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 
-export type Route = 'formatter' | 'table';
+export type Route = 'formatter' | 'table' | 'uuid';
 
 export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
   const getRouteFromHash = (): Route => {
     const hash = window.location.hash;
     if (hash === '#/table' || hash === '#table') {
       return 'table';
+    }
+    if (hash === '#/uuid' || hash === '#uuid') {
+      return 'uuid';
     }
     if (hash === '#/formatter' || hash === '#formatter') {
       return 'formatter';

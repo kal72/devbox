@@ -67,6 +67,35 @@ export function Sidebar({ currentRoute }: SidebarProps) {
               </div>
             </a>
           </li>
+
+          <li>
+            <a
+              href="#/uuid"
+              className={`nav-item ${currentRoute === 'uuid' ? 'is-active' : ''}`}
+            >
+              <div className="nav-icon">
+                {/* SVG Refresh/ID (UUID Generator) */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 12a9 9 0 0 1 15.5-6.2"></path>
+                  <path d="M18 2v4h-4"></path>
+                  <path d="M21 12a9 9 0 0 1-15.5 6.2"></path>
+                  <path d="M6 22v-4h4"></path>
+                </svg>
+              </div>
+              <div className="nav-text">
+                <span className="nav-title">UUID Generator</span>
+                <span className="nav-desc">Generate v4 & v7 IDs</span>
+              </div>
+            </a>
+          </li>
         </ul>
       </nav>
       
