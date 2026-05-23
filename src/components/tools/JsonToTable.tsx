@@ -12,25 +12,50 @@ export function JsonToTable() {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
   const [visibleHeaders, setVisibleHeaders] = useState<string[]>([]);
 
-  // Helper: recursive function to flatten nested objects into dot-separated keys
-  const flattenObject = (obj: any, prefix = ''): Record<string, any> => {
+  // Helper: recursive function to flatten nested objects and arrays into readable column paths
+  const flattenValue = (value: any, prefix = ''): Record<string, any> => {
     const flattened: Record<string, any> = {};
 
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        const propName = prefix ? `${prefix}.${key}` : key;
-        
-        if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-          Object.assign(flattened, flattenObject(obj[key], propName));
-        } else if (Array.isArray(obj[key])) {
-          flattened[propName] = JSON.stringify(obj[key]);
+    if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        const propName = prefix ? `${prefix}[${index}]` : `[${index}]`;
+        if (typeof item === 'object' && item !== null) {
+          Object.assign(flattened, flattenValue(item, propName));
         } else {
-          flattened[propName] = obj[key];
+          flattened[propName] = item;
         }
-      }
+      });
+      return flattened;
     }
 
+    if (typeof value === 'object' && value !== null) {
+      Object.keys(value).forEach((key) => {
+        const propName = prefix ? `${prefix}.${key}` : key;
+        if (Array.isArray(value[key])) {
+          flattened[propName] = JSON.stringify(value[key]);
+        } else if (typeof value[key] === 'object' && value[key] !== null) {
+          Object.assign(flattened, flattenValue(value[key], propName));
+        } else {
+          flattened[propName] = value[key];
+        }
+      });
+      return flattened;
+    }
+
+    flattened[prefix || 'value'] = value;
     return flattened;
+  };
+
+  const extractRows = (value: any): Record<string, any>[] => {
+    if (Array.isArray(value)) {
+      return value.flatMap((item) => extractRows(item));
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return [flattenValue(value)];
+    }
+
+    return [{ value }];
   };
 
   // Parse input and return flat rows list
@@ -40,25 +65,7 @@ export function JsonToTable() {
     try {
       const parsed = JSON.parse(jsonInput);
       
-      // If parsed JSON is an array of objects
-      if (Array.isArray(parsed)) {
-        return parsed.map((item) => {
-          if (typeof item === 'object' && item !== null) {
-            return flattenObject(item);
-          }
-          return { value: item };
-        });
-      }
-      
-      // If parsed JSON is a single object
-      if (typeof parsed === 'object' && parsed !== null) {
-        // Can be rendered as single row or a list of properties
-        // We'll flatten it and render as a single row
-        return [flattenObject(parsed)];
-      }
-
-      // If it's a primitive value
-      return [{ value: parsed }];
+      return extractRows(parsed);
     } catch (e: any) {
       return [];
     }
