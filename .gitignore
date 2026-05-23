@@ -24,4 +24,7 @@ dist-ssr
 *.sw?
 
 # agent
-.agents/*
+.agents/
+.rtk/
+.github/
+CLAUDE.md
