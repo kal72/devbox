@@ -5,6 +5,7 @@ import { JsonToTable } from './components/tools/JsonToTable';
 import { UuidGenerator } from './components/tools/UuidGenerator';
 import { JwtTool } from './components/tools/JwtTool';
 import { SqlTool } from './components/tools/SqlTool';
+import { HashGenerator } from './components/tools/HashGenerator';
 
 function App() {
   const currentRoute = useHashRoute('formatter');
@@ -16,6 +17,7 @@ function App() {
       {currentRoute === 'uuid' && <UuidGenerator />}
       {currentRoute === 'jwt' && <JwtTool />}
       {currentRoute === 'sql' && <SqlTool />}
+      {currentRoute === 'hash' && <HashGenerator />}
     </Layout>
   );
 }
