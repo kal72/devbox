@@ -24,13 +24,13 @@ body {
 }
 
 a {
-  color: var(--accent-blue);
+  color: var(--accent-violet);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--blue-700);
+  color: var(--violet-700);
 }
 
 /* Global scrollbar style following modern guidelines */
@@ -76,13 +76,13 @@ input, textarea, select {
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: var(--accent-violet);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 /* Accessibility */
 :focus-visible {
-  outline: 2px solid var(--accent-blue);
+  outline: 2px solid var(--accent-violet);
   outline-offset: 2px;
 }
 

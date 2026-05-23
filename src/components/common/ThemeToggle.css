@@ -30,7 +30,7 @@
 }
 
 .theme-toggle.is-pinned {
-  border-color: var(--accent-blue);
+  border-color: var(--accent-violet);
   box-shadow: var(--shadow-sm);
 }
 
@@ -107,9 +107,9 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--accent-blue);
+  background-color: var(--accent-violet);
   margin-left: 2px;
-  box-shadow: 0 0 4px var(--accent-blue);
+  box-shadow: 0 0 4px var(--accent-violet);
   animation: pulse-indicator 2s infinite ease-in-out;
 }
 

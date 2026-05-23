@@ -35,11 +35,11 @@
 }
 
 .nav-item.is-active {
-  background-color: var(--bg-primary);
-  color: var(--accent-blue) !important;
+  background: linear-gradient(135deg, var(--accent-violet), #a855f7);
+  color: white !important;
   font-weight: 500;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-primary);
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+  border: none;
 }
 
 .nav-icon {
@@ -72,7 +72,7 @@
 }
 
 .nav-item.is-active .nav-desc {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .sidebar-footer {
@@ -99,13 +99,13 @@
     border-right: none;
     border-top: 1px solid var(--border-primary);
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(243, 238, 255, 0.92);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
 
   :root.theme-dark .sidebar {
-    background-color: rgba(18, 18, 18, 0.9);
+    background-color: rgba(22, 15, 46, 0.92);
   }
 
   .sidebar-nav {
@@ -143,7 +143,9 @@
   }
 
   .nav-item.is-active {
-    color: var(--accent-blue) !important;
+    color: var(--accent-violet) !important;
+    background: none !important;
+    box-shadow: none !important;
   }
 
   .nav-icon svg {

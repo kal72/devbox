@@ -111,7 +111,7 @@
 
 .clear-search-btn {
   font-size: 0.8rem;
-  color: var(--accent-blue);
+  color: var(--accent-violet);
   text-decoration: underline;
   cursor: pointer;
   background: none;
@@ -174,7 +174,7 @@
 }
 
 .extracted-table th.is-sorted {
-  color: var(--accent-blue);
+  color: var(--accent-violet);
   background-color: var(--bg-secondary);
 }
 
