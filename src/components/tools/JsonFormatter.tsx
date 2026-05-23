@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { type KeyboardEvent, useState, useEffect } from 'react';
 import { CodeEditor } from '../common/CodeEditor';
 import './JsonFormatter.css';
 
@@ -8,6 +8,7 @@ export function JsonFormatter() {
   const [indentSize, setIndentSize] = useState<number | string>(2);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [errorLine, setErrorLine] = useState<number | null>(null);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [stats, setStats] = useState({
     lines: 0,
     sizeBytes: 0,
@@ -225,19 +226,75 @@ export function JsonFormatter() {
     setOutputJson('');
     setValidationError(null);
     setErrorLine(null);
+    setCopyStatus('idle');
   };
 
   const handleCopy = () => {
     const textToCopy = outputJson || inputJson;
     if (!textToCopy) return;
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        // Temp status indicator could go here
-        alert('Copied to clipboard!');
-      })
-      .catch(err => {
+
+    const showStatus = (status: 'copied' | 'failed') => {
+      setCopyStatus(status);
+      window.setTimeout(() => setCopyStatus('idle'), 1800);
+    };
+
+    const selectVisibleText = () => {
+      const selector = outputJson ? '.output-panel textarea' : '.input-panel textarea';
+      const textarea = document.querySelector<HTMLTextAreaElement>(selector);
+      if (!textarea) return;
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textToCopy.length);
+    };
+
+    const copyWithSelection = () => {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy;
+        textarea.style.position = 'fixed';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.width = '1px';
+        textarea.style.height = '1px';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(0, textToCopy.length);
+
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return copied;
+      } catch (err) {
         console.error('Failed to copy text: ', err);
-      });
+        return false;
+      }
+    };
+
+    if (copyWithSelection()) {
+      showStatus('copied');
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => showStatus('copied'))
+        .catch(() => {
+          selectVisibleText();
+          showStatus('failed');
+        });
+      return;
+    }
+
+    selectVisibleText();
+    showStatus('failed');
+  };
+
+  const handleCopyKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCopy();
+    }
   };
 
   const formatSize = (bytes: number) => {
@@ -284,7 +341,17 @@ export function JsonFormatter() {
           <button onClick={() => validateJson(inputJson)} className="btn btn-secondary" title="Validate JSON syntax">
             Validate
           </button>
-          <button onClick={handleCopy} className="btn btn-secondary" disabled={!outputJson && !inputJson} title="Copy result to clipboard">
+          <button
+            type="button"
+            onMouseDown={(event) => {
+              event.preventDefault();
+              handleCopy();
+            }}
+            onKeyDown={handleCopyKeyDown}
+            className="btn btn-secondary"
+            disabled={!outputJson && !inputJson}
+            title="Copy result to clipboard"
+          >
             Copy
           </button>
           <button onClick={handleClear} className="btn btn-danger" title="Clear all text fields">
@@ -331,7 +398,15 @@ export function JsonFormatter() {
               <p>Formatted or loose result</p>
             </div>
             {outputJson && (
-              <button onClick={handleCopy} className="btn-text-copy">
+              <button
+                type="button"
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  handleCopy();
+                }}
+                onKeyDown={handleCopyKeyDown}
+                className="btn-text-copy"
+              >
                 Copy
               </button>
             )}
@@ -373,6 +448,12 @@ export function JsonFormatter() {
               <span className="stat-item"><strong>Size:</strong> {formatSize(stats.sizeBytes)}</span>
               <span className="stat-item"><strong>Lines:</strong> {stats.lines}</span>
               <span className="stat-item"><strong>Keys/Nodes:</strong> {stats.keys}</span>
+            </div>
+          )}
+
+          {copyStatus !== 'idle' && (
+            <div className={`copy-status-message ${copyStatus === 'failed' ? 'is-failed' : ''}`} role="status" aria-live="polite">
+              {copyStatus === 'copied' ? 'Copied to clipboard' : 'Clipboard blocked. Text selected, press Cmd/Ctrl+C.'}
             </div>
           )}
         </div>
