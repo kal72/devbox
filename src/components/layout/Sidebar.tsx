@@ -96,6 +96,35 @@ export function Sidebar({ currentRoute }: SidebarProps) {
               </div>
             </a>
           </li>
+
+          <li>
+            <a
+              href="#/jwt"
+              className={`nav-item ${currentRoute === 'jwt' ? 'is-active' : ''}`}
+            >
+              <div className="nav-icon">
+                {/* SVG Key (JWT Tool) */}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="7.5" cy="15.5" r="4.5"></circle>
+                  <path d="M10.7 12.3 21 2"></path>
+                  <path d="m16 7 2 2"></path>
+                  <path d="m19 4 2 2"></path>
+                </svg>
+              </div>
+              <div className="nav-text">
+                <span className="nav-title">JWT Tool</span>
+                <span className="nav-desc">Encode, Decode & Verify</span>
+              </div>
+            </a>
+          </li>
         </ul>
       </nav>
       
