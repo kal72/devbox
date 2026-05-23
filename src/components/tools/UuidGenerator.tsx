@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 import './UuidGenerator.css';
 
 type UuidVersion = 'v4' | 'v7';
@@ -49,7 +49,8 @@ const generateUuid = (version: UuidVersion) => {
 export function UuidGenerator() {
   const [version, setVersion] = useState<UuidVersion>('v4');
   const [uuid, setUuid] = useState(() => generateUuid('v4'));
-  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied'>('idle');
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const uuidInputRef = useRef<HTMLInputElement>(null);
 
   const refreshUuid = (nextVersion = version) => {
     setUuid(generateUuid(nextVersion));
@@ -65,14 +66,61 @@ export function UuidGenerator() {
   };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(uuid)
-      .then(() => {
-        setCopyStatus('copied');
-        window.setTimeout(() => setCopyStatus('idle'), 1400);
-      })
-      .catch((err) => {
+    const showStatus = (status: 'copied' | 'failed') => {
+      setCopyStatus(status);
+      window.setTimeout(() => setCopyStatus('idle'), 1600);
+    };
+
+    const copyWithSelection = () => {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = uuid;
+        textarea.style.position = 'fixed';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.width = '1px';
+        textarea.style.height = '1px';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(0, uuid.length);
+
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return copied;
+      } catch (err) {
         console.error('Failed to copy UUID: ', err);
-      });
+        return false;
+      }
+    };
+
+    if (copyWithSelection()) {
+      showStatus('copied');
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(uuid)
+        .then(() => showStatus('copied'))
+        .catch(() => {
+          uuidInputRef.current?.focus();
+          uuidInputRef.current?.select();
+          showStatus('failed');
+        });
+      return;
+    }
+
+    uuidInputRef.current?.focus();
+    uuidInputRef.current?.select();
+    showStatus('failed');
+  };
+
+  const handleCopyKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleCopy();
+    }
   };
 
   return (
@@ -112,12 +160,26 @@ export function UuidGenerator() {
         <div className="uuid-output-panel">
           <label htmlFor="generated-uuid">Generated UUID</label>
           <div className="uuid-output-row">
-            <input id="generated-uuid" value={uuid} readOnly className="uuid-output-input" />
-            <button onClick={handleCopy} className="btn btn-secondary uuid-copy-btn">
+            <input id="generated-uuid" ref={uuidInputRef} value={uuid} readOnly className="uuid-output-input" />
+            <button
+              type="button"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                handleCopy();
+              }}
+              onKeyDown={handleCopyKeyDown}
+              className="btn btn-secondary uuid-copy-btn"
+            >
               {copyStatus === 'copied' ? 'Copied' : 'Copy'}
             </button>
           </div>
         </div>
+
+        {copyStatus !== 'idle' && (
+          <div className={`uuid-copy-notice ${copyStatus === 'failed' ? 'is-failed' : ''}`} role="status" aria-live="polite">
+              {copyStatus === 'copied' ? 'UUID copied to clipboard' : 'Clipboard blocked. UUID selected, press Cmd/Ctrl+C.'}
+          </div>
+        )}
 
         <div className="uuid-meta">
           <span>Current type: UUID {version.toUpperCase()}</span>
