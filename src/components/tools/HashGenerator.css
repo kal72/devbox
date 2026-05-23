@@ -166,6 +166,12 @@
   min-width: 0;
 }
 
+.hash-bcrypt-col .hash-input-panel {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
 .hash-col-title {
   color: var(--text-secondary);
   font-size: 0.78rem;

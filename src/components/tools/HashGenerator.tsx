@@ -563,9 +563,7 @@ export function HashGenerator() {
                 spellCheck={false}
                 className="hash-verify-textarea"
               />
-            </div>
-            <div className="hash-input-panel">
-              <label htmlFor="verify-hash-field">bcrypt Hash</label>
+              <label htmlFor="verify-hash-field" style={{ marginTop: 'var(--space-sm)' }}>bcrypt Hash</label>
               <textarea
                 id="verify-hash-field"
                 value={verifyHash}
