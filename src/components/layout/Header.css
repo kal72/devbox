@@ -1,0 +1,115 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  min-height: 56px;
+  padding: 0 var(--space-lg);
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+/* System Dark preference fallback */
+@media (prefers-color-scheme: dark) {
+  .header {
+    background-color: rgba(10, 10, 10, 0.7);
+  }
+}
+
+/* Supports light-dark() natively */
+@supports (color: light-dark(white, black)) {
+  .header {
+    background-color: light-dark(rgba(255, 255, 255, 0.7), rgba(10, 10, 10, 0.7));
+  }
+}
+
+/* Pinned Light override */
+:root.theme-light .header {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Pinned Dark override */
+:root.theme-dark .header {
+  background-color: rgba(10, 10, 10, 0.7);
+}
+
+/* For browsers that don't support backdrop-filter */
+@supports not (backdrop-filter: blur(12px)) {
+  .header {
+    background-color: var(--bg-primary);
+  }
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--text-primary) !important;
+}
+
+.logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: var(--accent-blue);
+  color: white;
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.brand-badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.05em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.github-link {
+  color: var(--text-secondary) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.github-link:hover {
+  color: var(--text-primary) !important;
+  transform: scale(1.05);
+}
+
+.github-icon {
+  width: 20px;
+  height: 20px;
+}

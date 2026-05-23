@@ -1,0 +1,213 @@
+:root {
+  /* Tier 1: Color tokens */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --gray-950: #0a0a0a;
+
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+
+  --green-50: #f0fdf4;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+
+  --red-50: #fef2f2;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+
+  /* Tier 2: Dynamic Colors */
+  --bg-primary-light: #ffffff;
+  --bg-primary-dark: #0a0a0a;
+  --bg-primary: var(--bg-primary-light);
+
+  --bg-secondary-light: #f5f5f5;
+  --bg-secondary-dark: #121212;
+  --bg-secondary: var(--bg-secondary-light);
+
+  --bg-tertiary-light: #e5e5e5;
+  --bg-tertiary-dark: #1e1e1e;
+  --bg-tertiary: var(--bg-tertiary-light);
+
+  --text-primary-light: #171717;
+  --text-primary-dark: #f5f5f5;
+  --text-primary: var(--text-primary-light);
+
+  --text-secondary-light: #525252;
+  --text-secondary-dark: #a3a3a3;
+  --text-secondary: var(--text-secondary-light);
+
+  --text-muted-light: #a3a3a3;
+  --text-muted-dark: #525252;
+  --text-muted: var(--text-muted-light);
+
+  --border-primary-light: #e5e5e5;
+  --border-primary-dark: #262626;
+  --border-primary: var(--border-primary-light);
+
+  --border-secondary-light: #d4d4d4;
+  --border-secondary-dark: #333333;
+  --border-secondary: var(--border-secondary-light);
+
+  --accent-blue-light: #2563eb;
+  --accent-blue-dark: #3b82f6;
+  --accent-blue: var(--accent-blue-light);
+
+  --accent-green-light: #16a34a;
+  --accent-green-dark: #22c55e;
+  --accent-green: var(--accent-green-light);
+
+  --accent-red-light: #dc2626;
+  --accent-red-dark: #ef4444;
+  --accent-red: var(--accent-red-light);
+
+  --surface-code-light: #f8f8f8;
+  --surface-code-dark: #111111;
+  --surface-code: var(--surface-code-light);
+
+  --surface-hover-light: rgba(0, 0, 0, 0.04);
+  --surface-hover-dark: rgba(255, 255, 255, 0.04);
+  --surface-hover: var(--surface-hover-light);
+
+  --shadow-sm-light: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm-dark: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: var(--shadow-sm-light);
+
+  --shadow-md-light: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-md-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --shadow-md: var(--shadow-md-light);
+
+  --accent-color-light: var(--accent-blue-light);
+  --accent-color-dark: var(--accent-blue-dark);
+  --accent-color: var(--accent-color-light);
+
+  --scrollbar-track-light: #f1f1f1;
+  --scrollbar-track-dark: #1e1e1e;
+  --scrollbar-track: var(--scrollbar-track-light);
+
+  --scrollbar-thumb-light: #c1c1c1;
+  --scrollbar-thumb-dark: #424242;
+  --scrollbar-thumb: var(--scrollbar-thumb-light);
+
+  /* Tier 2.5: Fallback for browsers without light-dark support */
+  @media (prefers-color-scheme: dark) {
+    --bg-primary: var(--bg-primary-dark);
+    --bg-secondary: var(--bg-secondary-dark);
+    --bg-tertiary: var(--bg-tertiary-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --text-muted: var(--text-muted-dark);
+    --border-primary: var(--border-primary-dark);
+    --border-secondary: var(--border-secondary-dark);
+    --accent-blue: var(--accent-blue-dark);
+    --accent-green: var(--accent-green-dark);
+    --accent-red: var(--accent-red-dark);
+    --surface-code: var(--surface-code-dark);
+    --surface-hover: var(--surface-hover-dark);
+    --shadow-sm: var(--shadow-sm-dark);
+    --shadow-md: var(--shadow-md-dark);
+    --accent-color: var(--accent-color-dark);
+    --scrollbar-track: var(--scrollbar-track-dark);
+    --scrollbar-thumb: var(--scrollbar-thumb-dark);
+  }
+
+  /* Supports light-dark() natively */
+  @supports (color: light-dark(white, black)) {
+    --bg-primary: light-dark(var(--bg-primary-light), var(--bg-primary-dark));
+    --bg-secondary: light-dark(var(--bg-secondary-light), var(--bg-secondary-dark));
+    --bg-tertiary: light-dark(var(--bg-tertiary-light), var(--bg-tertiary-dark));
+    --text-primary: light-dark(var(--text-primary-light), var(--text-primary-dark));
+    --text-secondary: light-dark(var(--text-secondary-light), var(--text-secondary-dark));
+    --text-muted: light-dark(var(--text-muted-light), var(--text-muted-dark));
+    --border-primary: light-dark(var(--border-primary-light), var(--border-primary-dark));
+    --border-secondary: light-dark(var(--border-secondary-light), var(--border-secondary-dark));
+    --accent-blue: light-dark(var(--accent-blue-light), var(--accent-blue-dark));
+    --accent-green: light-dark(var(--accent-green-light), var(--accent-green-dark));
+    --accent-red: light-dark(var(--accent-red-light), var(--accent-red-dark));
+    --surface-code: light-dark(var(--surface-code-light), var(--surface-code-dark));
+    --surface-hover: light-dark(var(--surface-hover-light), var(--surface-hover-dark));
+    --shadow-sm: light-dark(var(--shadow-sm-light), var(--shadow-sm-dark));
+    --shadow-md: light-dark(var(--shadow-md-light), var(--shadow-md-dark));
+    --accent-color: light-dark(var(--accent-color-light), var(--accent-color-dark));
+    --scrollbar-track: light-dark(var(--scrollbar-track-light), var(--scrollbar-track-dark));
+    --scrollbar-thumb: light-dark(var(--scrollbar-thumb-light), var(--scrollbar-thumb-dark));
+  }
+  /* MANDATORY: Automatically adapt native UI to user preferences */
+  color-scheme: light dark;
+  accent-color: var(--accent-color);
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* Radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Manual Theme Overrides (placed outside :root block to avoid descendant selector bugs) */
+:root.theme-light {
+  --bg-primary: var(--bg-primary-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --bg-tertiary: var(--bg-tertiary-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-muted: var(--text-muted-light);
+  --border-primary: var(--border-primary-light);
+  --border-secondary: var(--border-secondary-light);
+  --accent-blue: var(--accent-blue-light);
+  --accent-green: var(--accent-green-light);
+  --accent-red: var(--accent-red-light);
+  --surface-code: var(--surface-code-light);
+  --surface-hover: var(--surface-hover-light);
+  --shadow-sm: var(--shadow-sm-light);
+  --shadow-md: var(--shadow-md-light);
+  --accent-color: var(--accent-color-light);
+  --scrollbar-track: var(--scrollbar-track-light);
+  --scrollbar-thumb: var(--scrollbar-thumb-light);
+}
+
+:root.theme-dark {
+  --bg-primary: var(--bg-primary-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --bg-tertiary: var(--bg-tertiary-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-muted: var(--text-muted-dark);
+  --border-primary: var(--border-primary-dark);
+  --border-secondary: var(--border-secondary-dark);
+  --accent-blue: var(--accent-blue-dark);
+  --accent-green: var(--accent-green-dark);
+  --accent-red: var(--accent-red-dark);
+  --surface-code: var(--surface-code-dark);
+  --surface-hover: var(--surface-hover-dark);
+  --shadow-sm: var(--shadow-sm-dark);
+  --shadow-md: var(--shadow-md-dark);
+  --accent-color: var(--accent-color-dark);
+  --scrollbar-track: var(--scrollbar-track-dark);
+  --scrollbar-thumb: var(--scrollbar-thumb-dark);
+}

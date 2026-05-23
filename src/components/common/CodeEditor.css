@@ -1,0 +1,62 @@
+.code-editor-container {
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 20px; /* Crucial: Must be absolute matching line height */
+  background-color: var(--surface-code);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.code-editor-container:focus-within {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.line-numbers-container {
+  padding: 12px 0;
+  width: 48px;
+  min-width: 48px;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-primary);
+  text-align: right;
+  user-select: none;
+  overflow: hidden; /* Scrolled programmatically via JS sync */
+  color: var(--text-muted);
+}
+
+.line-number {
+  padding-right: 12px;
+  height: 20px; /* Matches absolute line height */
+  font-size: 12px;
+}
+
+.code-editor-textarea {
+  flex: 1;
+  border: none !important;
+  background-color: transparent !important;
+  color: var(--text-primary) !important;
+  padding: 12px !important;
+  height: 100% !important;
+  width: 100% !important;
+  outline: none !important;
+  box-shadow: none !important;
+  overflow-y: auto;
+  overflow-x: auto;
+  white-space: pre;
+  word-wrap: normal;
+  tab-size: 2;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+  line-height: 20px !important; /* Matches line number height */
+}
+
+/* Hide scrollbars for line-numbers-container */
+.line-numbers-container::-webkit-scrollbar {
+  display: none;
+}
