@@ -12,6 +12,7 @@
   height: calc(100vh - 56px);
   overflow: hidden;
   position: relative;
+  background-color: var(--bg-primary);
 }
 
 .layout-content {
@@ -22,7 +23,7 @@
   overflow-x: hidden;
   background-color: var(--bg-primary);
   transition: background-color var(--transition-fast);
-  padding: var(--space-md);
+  padding: var(--space-lg);
 }
 
 /* Custom scroller inside layout content */
@@ -39,6 +40,7 @@
 
   .layout-content {
     /* Leave room for the bottom fixed navigation bar on mobile */
-    padding-bottom: 80px;
+    padding: var(--space-md);
+    padding-bottom: 88px;
   }
 }

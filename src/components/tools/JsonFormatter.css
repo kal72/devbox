@@ -5,14 +5,55 @@
   gap: var(--space-md);
 }
 
+.formatter-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.tool-kicker {
+  color: var(--accent-violet);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.formatter-heading h1 {
+  color: var(--text-primary);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.heading-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.heading-stats span {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+}
+
 .formatter-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-md);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--border-primary);
+  padding: var(--space-sm);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .toolbar-section {
@@ -32,7 +73,7 @@
 }
 
 .indent-select {
-  padding: 6px 12px;
+  padding: 7px 12px;
   font-size: 0.85rem;
   border-radius: var(--radius-md);
   background-color: var(--bg-secondary);
@@ -45,11 +86,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
+  min-height: 34px;
+  padding: 7px 14px;
   font-size: 0.85rem;
   font-weight: 500;
-  border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
   border: 1px solid transparent;
 }
 
@@ -58,15 +100,15 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-violet), #a855f7);
+  background: var(--accent-violet);
   color: white;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 8px 16px -12px rgba(124, 58, 237, 0.8);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--violet-700), #9333ea);
+  background: var(--violet-700);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 10px 20px -14px rgba(124, 58, 237, 0.9);
 }
 
 .btn-secondary {
@@ -88,7 +130,7 @@
 }
 
 .btn-danger {
-  background-color: transparent;
+  background-color: var(--bg-secondary);
   color: var(--accent-red);
   border-color: rgba(220, 38, 38, 0.2);
 }
@@ -106,49 +148,76 @@
 .btn-text-copy {
   font-size: 0.8rem;
   font-weight: 500;
-  color: var(--accent-violet);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
   transition: opacity var(--transition-fast);
 }
 
 .btn-text-copy:hover {
-  opacity: 0.8;
-  text-decoration: underline;
+  color: var(--text-primary);
+  background-color: var(--surface-hover);
 }
 
 /* Formatter Panels Layout */
 .formatter-panels {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
+  gap: var(--space-lg);
   flex: 1;
-  min-height: 350px;
-  height: calc(100vh - 250px);
+  min-height: 360px;
+  height: calc(100vh - 292px);
 }
 
 .panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 0;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 24px;
+  min-height: 56px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .panel-header h3 {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.panel-header p {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  margin-top: 2px;
 }
 
 .panel-body {
   flex: 1;
   overflow: hidden;
-  height: calc(100% - 32px);
+  height: calc(100% - 56px);
+  padding: 0;
+}
+
+.panel-body .code-editor-container {
+  border: none;
+  border-radius: 0;
+}
+
+.panel-body .code-editor-container:focus-within {
+  box-shadow: inset 0 0 0 1px var(--accent-violet);
 }
 
 /* Badges */
@@ -156,7 +225,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   padding: 2px 8px;
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
 }
 
 .status-badge.is-valid {
@@ -186,7 +255,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-md);
-  padding: var(--space-md);
+  padding: 10px 12px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
@@ -198,7 +267,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .success-message {
@@ -237,6 +306,10 @@
   color: var(--text-secondary);
 }
 
+.stat-item {
+  white-space: nowrap;
+}
+
 .stat-item strong {
   color: var(--text-primary);
 }
@@ -245,12 +318,26 @@
 @media (max-width: 992px) {
   .formatter-panels {
     grid-template-columns: 1fr;
-    height: calc(100vh - 300px);
-    min-height: 500px;
+    height: auto;
+    min-height: 0;
+  }
+
+  .panel {
+    min-height: 360px;
   }
 }
 
 @media (max-width: 768px) {
+  .formatter-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .formatter-heading h1 {
+    font-size: 1.15rem;
+  }
+
   .formatter-toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -258,6 +345,12 @@
   
   .toolbar-section {
     justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .gap-sm {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .btn {
@@ -269,6 +362,11 @@
   .formatter-footer {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .stats-container {
+    flex-wrap: wrap;
     gap: var(--space-sm);
   }
 }

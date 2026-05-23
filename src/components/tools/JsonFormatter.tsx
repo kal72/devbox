@@ -149,6 +149,18 @@ export function JsonFormatter() {
 
   return (
     <div className="formatter-container">
+      <div className="formatter-heading">
+        <div>
+          <p className="tool-kicker">Formatter Workspace</p>
+          <h1>JSON Formatter</h1>
+        </div>
+        <div className="heading-stats" aria-label="Document statistics">
+          <span>{formatSize(stats.sizeBytes)}</span>
+          <span>{stats.lines} lines</span>
+          <span>{stats.keys} keys</span>
+        </div>
+      </div>
+
       <div className="formatter-toolbar">
         <div className="toolbar-section">
           <label htmlFor="indent-select" className="toolbar-label">Tab Size:</label>
@@ -187,7 +199,10 @@ export function JsonFormatter() {
         {/* Input Panel */}
         <div className="panel input-panel">
           <div className="panel-header">
-            <h3>Input JSON</h3>
+            <div>
+              <h3>Input</h3>
+              <p>Paste JSON source</p>
+            </div>
             {inputJson.trim() && (
               <span className={`status-badge ${validationError ? 'is-invalid' : 'is-valid'}`}>
                 {validationError ? 'Invalid JSON' : 'Valid JSON'}
@@ -213,10 +228,13 @@ export function JsonFormatter() {
         {/* Output Panel */}
         <div className="panel output-panel">
           <div className="panel-header">
-            <h3>Formatted Output</h3>
+            <div>
+              <h3>Output</h3>
+              <p>Formatted result</p>
+            </div>
             {outputJson && (
               <button onClick={handleCopy} className="btn-text-copy">
-                Copy Output
+                Copy
               </button>
             )}
           </div>
@@ -246,7 +264,7 @@ export function JsonFormatter() {
             stats.lines > 0 && (
               <div className="status-message success-message">
                 <span className="success-icon">✓</span>
-                <span>JSON Valid &amp; Processed successfully.</span>
+                <span>JSON valid and ready.</span>
               </div>
             )
           )}

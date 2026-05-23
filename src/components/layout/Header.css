@@ -4,39 +4,40 @@
   justify-content: space-between;
   height: 56px;
   min-height: 56px;
-  padding: 0 var(--space-lg);
-  background-color: rgba(243, 238, 255, 0.82);
+  padding: 0 var(--space-xl);
+  background-color: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-primary);
   position: sticky;
   top: 0;
   z-index: 100;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 /* System Dark preference fallback */
 @media (prefers-color-scheme: dark) {
   .header {
-    background-color: rgba(13, 10, 24, 0.82);
+    background-color: rgba(11, 16, 32, 0.86);
   }
 }
 
 /* Supports light-dark() natively */
 @supports (color: light-dark(white, black)) {
   .header {
-    background-color: light-dark(rgba(243, 238, 255, 0.82), rgba(13, 10, 24, 0.82));
+    background-color: light-dark(rgba(255, 255, 255, 0.86), rgba(11, 16, 32, 0.86));
   }
 }
 
 /* Pinned Light override */
 :root.theme-light .header {
-  background-color: rgba(243, 238, 255, 0.82);
+  background-color: rgba(255, 255, 255, 0.86);
 }
 
 /* Pinned Dark override */
 :root.theme-dark .header {
-  background-color: rgba(13, 10, 24, 0.82);
+  background-color: rgba(11, 16, 32, 0.86);
 }
 
 /* For browsers that don't support backdrop-filter */
@@ -55,7 +56,7 @@
 .logo-container {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
   color: var(--text-primary) !important;
 }
 
@@ -63,36 +64,41 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  width: 30px;
+  height: 30px;
+  background: #111827;
   color: white;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+  box-shadow: var(--shadow-sm);
+}
+
+:root.theme-dark .logo-icon {
+  background: #f8fafc;
+  color: #111827;
 }
 
 .logo-text {
   font-weight: 700;
   font-size: 1.1rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .brand-badge {
   font-size: 0.7rem;
   font-weight: 600;
-  background-color: var(--violet-100);
-  color: var(--accent-violet);
-  padding: 2px 6px;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  padding: 3px 7px;
   border-radius: var(--radius-sm);
   letter-spacing: 0.05em;
 }
 
 :root.theme-dark .brand-badge {
-  background-color: rgba(167, 139, 250, 0.15);
-  color: var(--accent-violet);
+  background-color: rgba(148, 163, 184, 0.12);
+  color: var(--text-secondary);
 }
 
 .header-actions {
@@ -106,15 +112,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-secondary);
   transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
 .github-link:hover {
   color: var(--text-primary) !important;
-  transform: scale(1.05);
+  transform: translateY(-1px);
 }
 
 .github-icon {
   width: 20px;
   height: 20px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 var(--space-md);
+  }
+
+  .brand-badge {
+    display: none;
+  }
 }
