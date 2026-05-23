@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { CodeEditor } from '../common/CodeEditor';
 import './JsonToTable.css';
 
@@ -10,6 +10,7 @@ export function JsonToTable() {
   // Table search and sort states
   const [searchQuery, setSearchQuery] = useState('');
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [visibleHeaders, setVisibleHeaders] = useState<string[]>([]);
 
   // Helper: recursive function to flatten nested objects into dot-separated keys
   const flattenObject = (obj: any, prefix = ''): Record<string, any> => {
@@ -72,6 +73,30 @@ export function JsonToTable() {
     return Array.from(headerSet);
   }, [rawRows]);
 
+  useEffect(() => {
+    setVisibleHeaders((currentHeaders) => {
+      const availableHeaders = new Set(headers);
+      const preservedHeaders = currentHeaders.filter((header) => availableHeaders.has(header));
+      const newHeaders = headers.filter((header) => !currentHeaders.includes(header));
+      return [...preservedHeaders, ...newHeaders];
+    });
+  }, [headers]);
+
+  useEffect(() => {
+    if (sortConfig && !visibleHeaders.includes(sortConfig.key)) {
+      setSortConfig(null);
+    }
+  }, [sortConfig, visibleHeaders]);
+
+  const toggleHeaderVisibility = (header: string) => {
+    setVisibleHeaders((currentHeaders) => {
+      if (currentHeaders.includes(header)) {
+        return currentHeaders.filter((item) => item !== header);
+      }
+      return headers.filter((item) => item === header || currentHeaders.includes(item));
+    });
+  };
+
   // Process rows with filtering and sorting
   const processedRows = useMemo(() => {
     let rows = [...rawRows];
@@ -80,7 +105,8 @@ export function JsonToTable() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       rows = rows.filter((row) => {
-        return Object.values(row).some((val) => {
+        return visibleHeaders.some((header) => {
+          const val = row[header];
           if (val === null || val === undefined) return false;
           return String(val).toLowerCase().includes(query);
         });
@@ -111,7 +137,7 @@ export function JsonToTable() {
     }
 
     return rows;
-  }, [rawRows, searchQuery, sortConfig]);
+  }, [rawRows, searchQuery, sortConfig, visibleHeaders]);
 
   const handleRenderTable = () => {
     if (!jsonInput.trim()) {
@@ -138,14 +164,14 @@ export function JsonToTable() {
 
   // Export to CSV string
   const generateCSV = (): string => {
-    if (headers.length === 0) return '';
+    if (visibleHeaders.length === 0) return '';
     
     // Header row
-    const csvHeader = headers.map(h => `"${h.replace(/"/g, '""')}"`).join(',');
+    const csvHeader = visibleHeaders.map(h => `"${h.replace(/"/g, '""')}"`).join(',');
     
     // Data rows
     const csvRows = rawRows.map(row => {
-      return headers.map(header => {
+      return visibleHeaders.map(header => {
         const val = row[header];
         if (val === undefined || val === null) return '';
         const strVal = String(val);
@@ -263,15 +289,46 @@ export function JsonToTable() {
 
           <div className="grid-summary">
             <span>Showing {processedRows.length} of {rawRows.length} items parsed</span>
+            <span>{visibleHeaders.length} of {headers.length} columns visible</span>
             {searchQuery && <button onClick={() => setSearchQuery('')} className="clear-search-btn">Clear search</button>}
           </div>
 
+          <div className="column-filter-panel">
+            <div className="column-filter-header">
+              <span>Visible headers</span>
+              <div className="column-filter-actions">
+                <button onClick={() => setVisibleHeaders(headers)} className="clear-search-btn">
+                  Select all
+                </button>
+                <button onClick={() => setVisibleHeaders([])} className="clear-search-btn">
+                  Hide all
+                </button>
+              </div>
+            </div>
+            <div className="column-filter-list">
+              {headers.map((header) => (
+                <label key={header} className="column-filter-option">
+                  <input
+                    type="checkbox"
+                    checked={visibleHeaders.includes(header)}
+                    onChange={() => toggleHeaderVisibility(header)}
+                  />
+                  <span>{header}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
           <div className="table-wrapper">
-            {processedRows.length > 0 ? (
+            {visibleHeaders.length === 0 ? (
+              <div className="empty-results">
+                <p>Select at least one header to show the table.</p>
+              </div>
+            ) : processedRows.length > 0 ? (
               <table id="interactive-extracted-table" className="extracted-table">
                 <thead>
                   <tr>
-                    {headers.map((header) => {
+                    {visibleHeaders.map((header) => {
                       const isSorted = sortConfig?.key === header;
                       return (
                         <th 
@@ -293,7 +350,7 @@ export function JsonToTable() {
                 <tbody>
                   {processedRows.map((row, rowIndex) => (
                     <tr key={rowIndex}>
-                      {headers.map((header) => {
+                      {visibleHeaders.map((header) => {
                         const cellValue = row[header];
                         return (
                           <td key={header}>
