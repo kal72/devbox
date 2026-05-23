@@ -6,9 +6,11 @@ interface CodeEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   readOnly?: boolean;
+  language?: 'json' | 'sql';
+  tabSize?: number | string;
 }
 
-export function CodeEditor({ value, onChange, placeholder, readOnly = false }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, placeholder, readOnly = false, language = 'json', tabSize = 2 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLPreElement>(null);
@@ -82,6 +84,57 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false }: C
     return nodes;
   };
 
+  const renderHighlightedSql = (source: string) => {
+    const sqlKeywords = [
+      'SELECT', 'FROM', 'WHERE', 'GROUP', 'BY', 'HAVING', 'ORDER', 'LIMIT', 'OFFSET',
+      'JOIN', 'LEFT', 'RIGHT', 'INNER', 'FULL', 'OUTER', 'CROSS', 'ON', 'AS',
+      'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'CREATE', 'ALTER', 'DROP',
+      'TABLE', 'VIEW', 'INDEX', 'AND', 'OR', 'NOT', 'NULL', 'IS', 'IN', 'LIKE',
+      'BETWEEN', 'EXISTS', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END', 'TRUE', 'FALSE',
+      'DISTINCT', 'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'RETURNING', 'UNION', 'ALL',
+    ];
+    const tokenPattern = /(--.*$|\/\*[\s\S]*?\*\/)|('(?:''|\\.|[^'\\])*'|"(?:\\"|[^"])*")|(\b\d+(?:\.\d+)?\b)|([(),.;=*<>+\-/])|\b([A-Za-z_][A-Za-z0-9_$]*)\b/gm;
+    const nodes: React.ReactNode[] = [];
+    let cursor = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = tokenPattern.exec(source)) !== null) {
+      if (match.index > cursor) {
+        nodes.push(source.slice(cursor, match.index));
+      }
+
+      const [token, commentToken, stringToken, numberToken, operatorToken, wordToken] = match;
+      const upperWord = wordToken?.toUpperCase();
+
+      if (commentToken) {
+        nodes.push(<span key={`${match.index}-sql-comment`} className="sql-token-comment">{commentToken}</span>);
+      } else if (stringToken) {
+        nodes.push(<span key={`${match.index}-sql-string`} className="sql-token-string">{stringToken}</span>);
+      } else if (numberToken) {
+        nodes.push(<span key={`${match.index}-sql-number`} className="sql-token-number">{numberToken}</span>);
+      } else if (operatorToken) {
+        nodes.push(<span key={`${match.index}-sql-operator`} className="sql-token-operator">{operatorToken}</span>);
+      } else if (upperWord && sqlKeywords.includes(upperWord)) {
+        nodes.push(<span key={`${match.index}-sql-keyword`} className="sql-token-keyword">{wordToken}</span>);
+      } else {
+        nodes.push(<span key={`${match.index}-sql-identifier`} className="sql-token-identifier">{wordToken}</span>);
+      }
+
+      cursor = match.index + token.length;
+    }
+
+    if (cursor < source.length) {
+      nodes.push(source.slice(cursor));
+    }
+
+    return nodes;
+  };
+
+  const renderHighlightedCode = (source: string) => {
+    if (language === 'sql') return renderHighlightedSql(source);
+    return renderHighlightedJson(source);
+  };
+
   // Sync scrolling of textarea and line numbers
   const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
     if (lineNumbersRef.current) {
@@ -99,7 +152,7 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false }: C
       e.preventDefault();
       const start = e.currentTarget.selectionStart;
       const end = e.currentTarget.selectionEnd;
-      const spaces = '  '; // 2 spaces for tab
+      const spaces = tabSize === 'tab' ? '\t' : ' '.repeat(Number(tabSize));
       
       const newValue = value.substring(0, start) + spaces + value.substring(end);
       onChange(newValue);
@@ -136,7 +189,7 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false }: C
       <div className="code-editor-main">
         {value && (
           <pre className="code-editor-highlight" ref={highlightRef} aria-hidden="true">
-            {renderHighlightedJson(value)}
+            {renderHighlightedCode(value)}
           </pre>
         )}
         <textarea
@@ -148,11 +201,12 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false }: C
           placeholder={placeholder}
           readOnly={readOnly}
           spellCheck={false}
-          className={`code-editor-textarea ${value ? 'has-highlight' : ''}`}
-          style={{
-            resize: 'none',
-          }}
-        />
+        className={`code-editor-textarea ${value ? 'has-highlight' : ''}`}
+        style={{
+          resize: 'none',
+          tabSize: tabSize === 'tab' ? 4 : Number(tabSize),
+        }}
+      />
       </div>
     </div>
   );

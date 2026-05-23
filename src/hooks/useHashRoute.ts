@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export type Route = 'formatter' | 'table' | 'uuid' | 'jwt';
+export type Route = 'formatter' | 'table' | 'uuid' | 'jwt' | 'sql';
 
 export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
   const getRouteFromHash = (): Route => {
@@ -13,6 +13,9 @@ export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
     }
     if (hash === '#/jwt' || hash === '#jwt') {
       return 'jwt';
+    }
+    if (hash === '#/sql' || hash === '#sql') {
+      return 'sql';
     }
     if (hash === '#/formatter' || hash === '#formatter') {
       return 'formatter';

@@ -119,6 +119,32 @@
   color: var(--text-muted);
 }
 
+.sql-token-keyword {
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+.sql-token-string {
+  color: #0f766e;
+}
+
+.sql-token-number {
+  color: #b45309;
+}
+
+.sql-token-operator {
+  color: #2563eb;
+}
+
+.sql-token-comment {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.sql-token-identifier {
+  color: var(--text-primary);
+}
+
 :root.theme-dark .json-token-key {
   color: #c4b5fd;
 }
@@ -137,6 +163,22 @@
 
 :root.theme-dark .json-token-null {
   color: #fca5a5;
+}
+
+:root.theme-dark .sql-token-keyword {
+  color: #c4b5fd;
+}
+
+:root.theme-dark .sql-token-string {
+  color: #5eead4;
+}
+
+:root.theme-dark .sql-token-number {
+  color: #fbbf24;
+}
+
+:root.theme-dark .sql-token-operator {
+  color: #93c5fd;
 }
 
 /* Hide scrollbars for line-numbers-container */
