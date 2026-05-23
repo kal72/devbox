@@ -23,6 +23,115 @@ export function JsonFormatter() {
     return Number(indentSize);
   };
 
+  const getIndentUnit = (): string => {
+    if (indentSize === 'tab') return '\t';
+    return ' '.repeat(Number(indentSize));
+  };
+
+  const setJsonError = (jsonStr: string, errorMessage: string) => {
+    setValidationError(errorMessage);
+
+    // Attempt to extract line number from JSON parse error message
+    // Node/Chrome typically provides: "at position X" or "at line X column Y"
+    const positionMatch = errorMessage.match(/at position (\d+)/);
+    if (positionMatch) {
+      const pos = parseInt(positionMatch[1], 10);
+      const sub = jsonStr.substring(0, pos);
+      const line = sub.split('\n').length;
+      setErrorLine(line);
+    } else {
+      setErrorLine(null);
+    }
+  };
+
+  const looseFormatJson = (source: string): string => {
+    const indentUnit = getIndentUnit();
+    const output: string[] = [];
+    let indentLevel = 0;
+    let inString = false;
+    let isEscaped = false;
+    let pendingSpace = false;
+
+    const appendIndent = () => {
+      output.push(indentUnit.repeat(Math.max(indentLevel, 0)));
+    };
+
+    const trimTrailingInlineSpace = () => {
+      while (output.length > 0 && output[output.length - 1] === ' ') {
+        output.pop();
+      }
+    };
+
+    for (let index = 0; index < source.length; index += 1) {
+      const char = source[index];
+
+      if (inString) {
+        output.push(char);
+        if (isEscaped) {
+          isEscaped = false;
+        } else if (char === '\\') {
+          isEscaped = true;
+        } else if (char === '"') {
+          inString = false;
+        }
+        continue;
+      }
+
+      if (char === '"') {
+        if (pendingSpace && output.length > 0 && output[output.length - 1] !== '\n') {
+          output.push(' ');
+        }
+        pendingSpace = false;
+        inString = true;
+        output.push(char);
+        continue;
+      }
+
+      if (/\s/.test(char)) {
+        pendingSpace = output.length > 0 && output[output.length - 1] !== '\n';
+        continue;
+      }
+
+      pendingSpace = false;
+
+      if (char === '{' || char === '[') {
+        trimTrailingInlineSpace();
+        output.push(char, '\n');
+        indentLevel += 1;
+        appendIndent();
+        continue;
+      }
+
+      if (char === '}' || char === ']') {
+        trimTrailingInlineSpace();
+        if (output.length > 0 && output[output.length - 1] !== '\n') {
+          output.push('\n');
+        }
+        indentLevel -= 1;
+        appendIndent();
+        output.push(char);
+        continue;
+      }
+
+      if (char === ',') {
+        trimTrailingInlineSpace();
+        output.push(char, '\n');
+        appendIndent();
+        continue;
+      }
+
+      if (char === ':') {
+        trimTrailingInlineSpace();
+        output.push(': ');
+        continue;
+      }
+
+      output.push(char);
+    }
+
+    return output.join('').trim();
+  };
+
   const validateJson = (jsonStr: string): boolean => {
     if (!jsonStr.trim()) {
       setValidationError(null);
@@ -36,20 +145,7 @@ export function JsonFormatter() {
       setErrorLine(null);
       return true;
     } catch (err: any) {
-      const errorMessage = err.message;
-      setValidationError(errorMessage);
-      
-      // Attempt to extract line number from JSON parse error message
-      // Node/Chrome typically provides: "at position X" or "at line X column Y"
-      let positionMatch = errorMessage.match(/at position (\d+)/);
-      if (positionMatch) {
-        const pos = parseInt(positionMatch[1], 10);
-        const sub = jsonStr.substring(0, pos);
-        const line = sub.split('\n').length;
-        setErrorLine(line);
-      } else {
-        setErrorLine(null);
-      }
+      setJsonError(jsonStr, err.message);
       return false;
     }
   };
@@ -105,7 +201,9 @@ export function JsonFormatter() {
       setValidationError(null);
       setErrorLine(null);
     } catch (err: any) {
-      validateJson(inputJson);
+      const looseFormatted = looseFormatJson(inputJson);
+      setOutputJson(looseFormatted);
+      setJsonError(inputJson, err.message);
     }
   };
 
@@ -177,7 +275,7 @@ export function JsonFormatter() {
         </div>
 
         <div className="toolbar-section gap-sm">
-          <button onClick={handleFormat} className="btn btn-primary" title="Beautify JSON spacing">
+          <button onClick={handleFormat} className="btn btn-primary" title="Format valid JSON, or loosely format invalid JSON for readability">
             Format
           </button>
           <button onClick={handleMinify} className="btn btn-secondary" title="Remove all whitespace">
@@ -230,7 +328,7 @@ export function JsonFormatter() {
           <div className="panel-header">
             <div>
               <h3>Output</h3>
-              <p>Formatted result</p>
+              <p>Formatted or loose result</p>
             </div>
             {outputJson && (
               <button onClick={handleCopy} className="btn-text-copy">
@@ -258,6 +356,7 @@ export function JsonFormatter() {
               <div className="error-details">
                 <strong>Syntax Error:</strong> {validationError}
                 {errorLine && <span className="error-line-badge">Line {errorLine}</span>}
+                {outputJson && <span className="loose-format-badge">Loosely formatted</span>}
               </div>
             </div>
           ) : (

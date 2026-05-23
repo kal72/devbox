@@ -299,6 +299,20 @@
   color: white;
 }
 
+.loose-format-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background-color: rgba(180, 83, 9, 0.12);
+  color: #b45309;
+}
+
+:root.theme-dark .loose-format-badge {
+  background-color: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+}
+
 .stats-container {
   display: flex;
   gap: var(--space-md);
