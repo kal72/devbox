@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: var(--space-md);
   height: 100%;
+  position: relative;
 }
 
 .encrypt-heading h1 {
@@ -161,12 +162,17 @@
 
 .encrypt-action-row {
   display: flex;
+  align-items: center;
   gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
 .encrypt-work-actions {
   justify-content: flex-end;
+}
+
+.encrypt-work-actions .encrypt-status {
+  margin-left: auto;
 }
 
 .encrypt-rsa-config {
@@ -291,23 +297,33 @@
   border-radius: 0;
 }
 
-.encrypt-footer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-  padding: 10px 12px;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-}
-
 .encrypt-status,
 .encrypt-copy-status {
   padding: 4px 8px;
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.encrypt-toast {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  padding: 8px 10px;
+  color: var(--accent-green);
+  background-color: var(--green-50);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.encrypt-toast.is-failed {
+  color: var(--accent-red);
+  background-color: var(--red-50);
+  border-color: rgba(220, 38, 38, 0.2);
 }
 
 .encrypt-status.is-success,
@@ -335,6 +351,10 @@
   background-color: rgba(34, 197, 94, 0.1);
 }
 
+:root.theme-dark .encrypt-toast {
+  background-color: rgba(34, 197, 94, 0.12);
+}
+
 :root.theme-dark .encrypt-status.is-warning {
   color: #fbbf24;
   background-color: rgba(251, 191, 36, 0.14);
@@ -343,6 +363,10 @@
 :root.theme-dark .encrypt-status.is-error,
 :root.theme-dark .encrypt-copy-status.is-failed {
   background-color: rgba(239, 68, 68, 0.1);
+}
+
+:root.theme-dark .encrypt-toast.is-failed {
+  background-color: rgba(239, 68, 68, 0.12);
 }
 
 @media (max-width: 992px) {
@@ -365,6 +389,10 @@
   .encrypt-action-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .encrypt-work-actions .encrypt-status {
+    margin-left: 0;
   }
 
   .encrypt-mode-control {

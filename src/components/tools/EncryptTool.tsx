@@ -254,6 +254,12 @@ export function EncryptTool() {
 
   return (
     <div className="encrypt-tool-container">
+      {copyStatus !== 'idle' && (
+        <div className={`encrypt-toast ${copyStatus === 'failed' ? 'is-failed' : ''}`}>
+          {copyStatus === 'copied' ? 'Copied to clipboard' : 'Clipboard blocked'}
+        </div>
+      )}
+
       <div className="encrypt-heading">
         <div>
           <p className="tool-kicker">Crypto Utility</p>
@@ -427,6 +433,8 @@ export function EncryptTool() {
         >
           Clear
         </button>
+
+        {status && <span className={`encrypt-status is-${status.type}`}>{status.message}</span>}
       </div>
 
       {algorithm === 'RSA-OAEP' && (
@@ -437,16 +445,6 @@ export function EncryptTool() {
         </div>
       )}
 
-      {(status || copyStatus !== 'idle') && (
-        <div className="encrypt-footer">
-          {status && <span className={`encrypt-status is-${status.type}`}>{status.message}</span>}
-          {copyStatus !== 'idle' && (
-            <span className={`encrypt-copy-status ${copyStatus === 'failed' ? 'is-failed' : ''}`}>
-              {copyStatus === 'copied' ? 'Copied to clipboard' : 'Clipboard blocked'}
-            </span>
-          )}
-        </div>
-      )}
     </div>
   );
 }
