@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Route } from '../../hooks/useHashRoute';
 import './Sidebar.css';
 
@@ -6,14 +7,17 @@ interface SidebarProps {
 }
 
 export function Sidebar({ currentRoute }: SidebarProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isCollapsed ? 'is-collapsed' : ''}`}>
       <nav className="sidebar-nav">
         <ul>
           <li>
             <a
               href="#/formatter"
               className={`nav-item ${currentRoute === 'formatter' ? 'is-active' : ''}`}
+              title="JSON Formatter"
             >
               <div className="nav-icon">
                 {/* SVG Braces (JSON Formatter) */}
@@ -43,6 +47,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/table"
               className={`nav-item ${currentRoute === 'table' ? 'is-active' : ''}`}
+              title="JSON to Table"
             >
               <div className="nav-icon">
                 {/* SVG Table (JSON to Table) */}
@@ -72,6 +77,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/uuid"
               className={`nav-item ${currentRoute === 'uuid' ? 'is-active' : ''}`}
+              title="UUID Generator"
             >
               <div className="nav-icon">
                 {/* SVG Refresh/ID (UUID Generator) */}
@@ -101,6 +107,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/jwt"
               className={`nav-item ${currentRoute === 'jwt' ? 'is-active' : ''}`}
+              title="JWT Tool"
             >
               <div className="nav-icon">
                 {/* SVG Key (JWT Tool) */}
@@ -130,6 +137,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/sql"
               className={`nav-item ${currentRoute === 'sql' ? 'is-active' : ''}`}
+              title="SQL Formatter"
             >
               <div className="nav-icon">
                 {/* SVG Database (SQL Tool) */}
@@ -157,6 +165,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/hash"
               className={`nav-item ${currentRoute === 'hash' ? 'is-active' : ''}`}
+              title="Hash Generator"
             >
               <div className="nav-icon">
                 <svg
@@ -184,6 +193,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/encrypt"
               className={`nav-item ${currentRoute === 'encrypt' ? 'is-active' : ''}`}
+              title="Crypto Tool"
             >
               <div className="nav-icon">
                 <svg
@@ -210,6 +220,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/base64"
               className={`nav-item ${currentRoute === 'base64' ? 'is-active' : ''}`}
+              title="Base64 Tool"
             >
               <div className="nav-icon">
                 <svg
@@ -238,6 +249,7 @@ export function Sidebar({ currentRoute }: SidebarProps) {
             <a
               href="#/sql-gorm"
               className={`nav-item ${currentRoute === 'sql-gorm' ? 'is-active' : ''}`}
+              title="SQL to GORM"
             >
               <div className="nav-icon">
                 <svg
@@ -264,8 +276,31 @@ export function Sidebar({ currentRoute }: SidebarProps) {
         </ul>
       </nav>
       
-      <div className="sidebar-footer">
-        <p>Built with React &amp; CSS</p>
+      <div className="sidebar-bottom">
+        <div className="sidebar-footer">
+          <p>Built with React &amp; CSS</p>
+        </div>
+        <button
+          type="button"
+          className="sidebar-collapse-button"
+          onClick={() => setIsCollapsed((current) => !current)}
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d={isCollapsed ? 'M9 18l6-6-6-6' : 'M15 18l-6-6 6-6'}></path>
+          </svg>
+          <span>{isCollapsed ? 'Expand' : 'Collapse'}</span>
+        </button>
       </div>
     </aside>
   );
