@@ -1,4 +1,5 @@
 .sidebar {
+  --sidebar-transition: 220ms ease;
   width: 272px;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-primary);
@@ -10,7 +11,8 @@
   position: sticky;
   top: 56px;
   flex: 0 0 auto;
-  transition: width var(--transition-fast), padding var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  overflow: hidden;
+  transition: width var(--sidebar-transition), padding var(--sidebar-transition), background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .sidebar.is-collapsed {
@@ -29,7 +31,7 @@
   background-color: var(--bg-primary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
-  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+  transition: width var(--sidebar-transition), border-radius var(--sidebar-transition), background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .sidebar-collapse-button:hover {
@@ -46,8 +48,13 @@
 }
 
 .sidebar-collapse-button span {
+  max-width: 96px;
   font-size: 0.82rem;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width var(--sidebar-transition), opacity var(--sidebar-transition), transform var(--sidebar-transition);
 }
 
 .sidebar.is-collapsed .sidebar-collapse-button {
@@ -56,7 +63,9 @@
 }
 
 .sidebar.is-collapsed .sidebar-collapse-button span {
-  display: none;
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(-4px);
 }
 
 .sidebar-nav ul {
@@ -70,11 +79,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  min-height: 54px;
   padding: 10px 12px;
   border-radius: var(--radius-md);
   color: var(--text-secondary) !important;
   border: 1px solid transparent;
-  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: gap var(--sidebar-transition), padding var(--sidebar-transition), background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .sidebar.is-collapsed .nav-item {
@@ -121,28 +131,33 @@
 .nav-text {
   display: flex;
   flex-direction: column;
+  width: 178px;
+  max-width: 178px;
   min-width: 0;
-  transition: opacity var(--transition-fast), width var(--transition-fast);
+  opacity: 1;
+  overflow: hidden;
+  transform: translateX(0);
+  transition: max-width var(--sidebar-transition), opacity var(--sidebar-transition), transform var(--sidebar-transition);
 }
 
 .sidebar.is-collapsed .nav-text {
-  width: 0;
-  height: 0;
+  max-width: 0;
   opacity: 0;
-  overflow: hidden;
-  display: none;
+  transform: translateX(-6px);
   pointer-events: none;
 }
 
 .nav-title {
   font-size: 0.88rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .nav-desc {
   font-size: 0.73rem;
   color: var(--text-muted);
   margin-top: 1px;
+  white-space: nowrap;
 }
 
 .nav-item.is-active .nav-desc {
@@ -154,6 +169,10 @@
   font-size: 0.75rem;
   color: var(--text-muted);
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height var(--sidebar-transition), opacity var(--sidebar-transition), transform var(--sidebar-transition);
 }
 
 .sidebar-bottom {
@@ -171,7 +190,9 @@
 }
 
 .sidebar.is-collapsed .sidebar-footer {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  transform: translateX(-4px);
 }
 
 /* Mobile responsive redesign: Transforms sidebar into ergonomic bottom navigation tab bar! */
@@ -266,8 +287,10 @@
 
   .sidebar.is-collapsed .nav-text {
     width: auto;
+    max-width: none;
     opacity: 1;
     overflow: visible;
+    transform: none;
   }
 
   .sidebar-footer {
