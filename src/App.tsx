@@ -7,6 +7,7 @@ import { JwtTool } from './components/tools/JwtTool';
 import { SqlTool } from './components/tools/SqlTool';
 import { HashGenerator } from './components/tools/HashGenerator';
 import { EncryptTool } from './components/tools/EncryptTool';
+import { Base64Tool } from './components/tools/Base64Tool';
 
 function App() {
   const currentRoute = useHashRoute('formatter');
@@ -20,6 +21,7 @@ function App() {
       {currentRoute === 'sql' && <SqlTool />}
       {currentRoute === 'hash' && <HashGenerator />}
       {currentRoute === 'encrypt' && <EncryptTool />}
+      {currentRoute === 'base64' && <Base64Tool />}
     </Layout>
   );
 }
