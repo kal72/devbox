@@ -198,7 +198,13 @@ const buildGormTag = (column: ParsedColumn) => {
   return parts.join(';');
 };
 
-const generateGormStruct = (sql: string, packageName: string, useNullablePointers: boolean, includeTableName: boolean) => {
+const generateGormStruct = (
+  sql: string,
+  packageName: string,
+  useNullablePointers: boolean,
+  includeJsonTags: boolean,
+  includeTableName: boolean,
+) => {
   const { tableName, body } = extractCreateTableBody(sql);
   const columns = parseColumns(body);
   if (!columns.length) throw new Error('No table columns found.');
@@ -207,7 +213,8 @@ const generateGormStruct = (sql: string, packageName: string, useNullablePointer
   const fields = columns.map((column) => {
     const fieldName = toPascalCase(column.name);
     const goType = goTypeForSqlType(column, useNullablePointers);
-    return `\t${fieldName} ${goType} \`gorm:"${buildGormTag(column)}" json:"${column.name}"\``;
+    const jsonTag = includeJsonTags ? ` json:"${column.name}"` : '';
+    return `\t${fieldName} ${goType} \`gorm:"${buildGormTag(column)}"${jsonTag}\``;
   });
 
   const imports = new Set<string>();
@@ -231,6 +238,7 @@ export function SqlGormTool() {
   const [outputGo, setOutputGo] = useState('');
   const [packageName, setPackageName] = useState('models');
   const [useNullablePointers, setUseNullablePointers] = useState(true);
+  const [includeJsonTags, setIncludeJsonTags] = useState(true);
   const [includeTableName, setIncludeTableName] = useState(true);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
@@ -239,7 +247,7 @@ export function SqlGormTool() {
 
   const handleGenerate = () => {
     try {
-      setOutputGo(generateGormStruct(inputSql, packageName, useNullablePointers, includeTableName));
+      setOutputGo(generateGormStruct(inputSql, packageName, useNullablePointers, includeJsonTags, includeTableName));
       setStatus({ type: 'success', message: 'GORM model generated.' });
       setCopyStatus('idle');
     } catch (err: any) {
@@ -331,6 +339,11 @@ export function SqlGormTool() {
         <label className="sql-gorm-check">
           <input type="checkbox" checked={useNullablePointers} onChange={(event) => setUseNullablePointers(event.target.checked)} />
           Nullable as pointers
+        </label>
+
+        <label className="sql-gorm-check">
+          <input type="checkbox" checked={includeJsonTags} onChange={(event) => setIncludeJsonTags(event.target.checked)} />
+          JSON tags
         </label>
 
         <label className="sql-gorm-check">
