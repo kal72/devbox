@@ -271,13 +271,16 @@ export function EncryptTool() {
           </select>
         </label>
 
-        <div className="encrypt-mode-control" aria-label="Encrypt tool mode">
-          <button className={`encrypt-segment ${mode === 'encrypt' ? 'is-active' : ''}`} onClick={() => setMode('encrypt')}>
-            Encrypt
-          </button>
-          <button className={`encrypt-segment ${mode === 'decrypt' ? 'is-active' : ''}`} onClick={() => setMode('decrypt')}>
-            Decrypt
-          </button>
+        <div className="encrypt-control-field">
+          <span aria-hidden="true">Mode</span>
+          <div className="encrypt-mode-control" aria-label="Encrypt tool mode">
+            <button className={`encrypt-segment ${mode === 'encrypt' ? 'is-active' : ''}`} onClick={() => setMode('encrypt')}>
+              Encrypt
+            </button>
+            <button className={`encrypt-segment ${mode === 'decrypt' ? 'is-active' : ''}`} onClick={() => setMode('decrypt')}>
+              Decrypt
+            </button>
+          </div>
         </div>
       </div>
 
@@ -345,9 +348,12 @@ export function EncryptTool() {
                   <option value="2048">2048-bit</option>
                 </select>
               </label>
-              <button type="button" onClick={handleGenerateRsaKeys} className="btn btn-secondary">
-                Generate Key Pair
-              </button>
+              <div className="encrypt-control-field">
+                <span aria-hidden="true">Action</span>
+                <button type="button" onClick={handleGenerateRsaKeys} className="btn btn-secondary">
+                  Generate Key Pair
+                </button>
+              </div>
             </div>
 
             <div className="encrypt-rsa-active-key">

@@ -62,6 +62,7 @@
 }
 
 .encrypt-options label,
+.encrypt-control-field,
 .encrypt-algorithm-field,
 .encrypt-secret-field label {
   display: flex;
@@ -74,15 +75,27 @@
   text-transform: uppercase;
 }
 
+.encrypt-control-field > span {
+  visibility: hidden;
+}
+
 .encrypt-options select,
 .encrypt-options input,
-.encrypt-algorithm-field select {
+.encrypt-algorithm-field select,
+.encrypt-control-field > button,
+.encrypt-control-field .encrypt-mode-control {
   min-height: 36px;
   min-width: 160px;
   font-size: 0.85rem;
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.encrypt-control-field > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .encrypt-config-card {
