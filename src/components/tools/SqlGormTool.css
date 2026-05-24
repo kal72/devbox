@@ -1,0 +1,201 @@
+.sql-gorm-tool-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  height: 100%;
+  position: relative;
+}
+
+.sql-gorm-heading h1 {
+  color: var(--text-primary);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.sql-gorm-heading p:not(.tool-kicker) {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  margin-top: var(--space-xs);
+}
+
+.sql-gorm-control-card {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  padding: var(--space-sm);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.sql-gorm-control-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sql-gorm-control-card input[type="text"],
+.sql-gorm-control-card label:not(.sql-gorm-check) input {
+  min-height: 36px;
+  min-width: 180px;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sql-gorm-check {
+  min-height: 36px;
+  align-items: center;
+  flex-direction: row !important;
+  padding-bottom: 8px;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.sql-gorm-check input {
+  margin: 0;
+}
+
+.sql-gorm-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  flex: 1;
+  min-height: 420px;
+}
+
+.sql-gorm-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.sql-gorm-panel-header {
+  min-height: 56px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.sql-gorm-panel-header h3 {
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.sql-gorm-panel-header p {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  margin-top: 2px;
+}
+
+.sql-gorm-panel .code-editor-container {
+  flex: 1;
+  border: none;
+  border-radius: 0;
+}
+
+.sql-gorm-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.sql-gorm-action-row .sql-gorm-status {
+  margin-left: auto;
+}
+
+.sql-gorm-status {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sql-gorm-status.is-success {
+  color: var(--accent-green);
+  background-color: var(--green-50);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+}
+
+.sql-gorm-status.is-error {
+  color: var(--accent-red);
+  background-color: var(--red-50);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.sql-gorm-toast {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  padding: 8px 10px;
+  color: var(--accent-green);
+  background-color: var(--green-50);
+  border: 1px solid rgba(22, 163, 74, 0.2);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.sql-gorm-toast.is-failed {
+  color: var(--accent-red);
+  background-color: var(--red-50);
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+:root.theme-dark .sql-gorm-status.is-success,
+:root.theme-dark .sql-gorm-toast {
+  background-color: rgba(34, 197, 94, 0.12);
+}
+
+:root.theme-dark .sql-gorm-status.is-error,
+:root.theme-dark .sql-gorm-toast.is-failed {
+  background-color: rgba(239, 68, 68, 0.12);
+}
+
+@media (max-width: 992px) {
+  .sql-gorm-panels {
+    grid-template-columns: 1fr;
+  }
+
+  .sql-gorm-panel {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sql-gorm-heading h1 {
+    font-size: 1.15rem;
+  }
+
+  .sql-gorm-control-card,
+  .sql-gorm-action-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sql-gorm-control-card input[type="text"],
+  .sql-gorm-control-card label:not(.sql-gorm-check) input,
+  .sql-gorm-action-row .sql-gorm-status {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+  }
+}

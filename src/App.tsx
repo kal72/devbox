@@ -8,6 +8,7 @@ import { SqlTool } from './components/tools/SqlTool';
 import { HashGenerator } from './components/tools/HashGenerator';
 import { EncryptTool } from './components/tools/EncryptTool';
 import { Base64Tool } from './components/tools/Base64Tool';
+import { SqlGormTool } from './components/tools/SqlGormTool';
 
 function App() {
   const currentRoute = useHashRoute('formatter');
@@ -22,6 +23,7 @@ function App() {
       {currentRoute === 'hash' && <HashGenerator />}
       {currentRoute === 'encrypt' && <EncryptTool />}
       {currentRoute === 'base64' && <Base64Tool />}
+      {currentRoute === 'sql-gorm' && <SqlGormTool />}
     </Layout>
   );
 }

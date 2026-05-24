@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export type Route = 'formatter' | 'table' | 'uuid' | 'jwt' | 'sql' | 'hash' | 'encrypt' | 'base64';
+export type Route = 'formatter' | 'table' | 'uuid' | 'jwt' | 'sql' | 'hash' | 'encrypt' | 'base64' | 'sql-gorm';
 
 export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
   const getRouteFromHash = (): Route => {
@@ -28,6 +28,9 @@ export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
     }
     if (hash === '#/base64' || hash === '#base64') {
       return 'base64';
+    }
+    if (hash === '#/sql-gorm' || hash === '#sql-gorm') {
+      return 'sql-gorm';
     }
     return defaultRoute;
   };
