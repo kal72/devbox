@@ -180,6 +180,32 @@ export function Sidebar({ currentRoute }: SidebarProps) {
               </div>
             </a>
           </li>
+          <li>
+            <a
+              href="#/encrypt"
+              className={`nav-item ${currentRoute === 'encrypt' ? 'is-active' : ''}`}
+            >
+              <div className="nav-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="4" y="11" width="16" height="9" rx="2"></rect>
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                  <path d="M12 15v2"></path>
+                </svg>
+              </div>
+              <div className="nav-text">
+                <span className="nav-title">Crypto Tool</span>
+                <span className="nav-desc">AES & RSA encrypt</span>
+              </div>
+            </a>
+          </li>
         </ul>
       </nav>
       

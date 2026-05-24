@@ -6,11 +6,12 @@ interface CodeEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   readOnly?: boolean;
-  language?: 'json' | 'sql';
+  language?: 'json' | 'sql' | 'plain';
+  softWrap?: boolean;
   tabSize?: number | string;
 }
 
-export function CodeEditor({ value, onChange, placeholder, readOnly = false, language = 'json', tabSize = 2 }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, placeholder, readOnly = false, language = 'json', softWrap = false, tabSize = 2 }: CodeEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
   const highlightRef = useRef<HTMLPreElement>(null);
@@ -132,6 +133,7 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
 
   const renderHighlightedCode = (source: string) => {
     if (language === 'sql') return renderHighlightedSql(source);
+    if (language === 'plain') return source;
     return renderHighlightedJson(source);
   };
 
@@ -178,7 +180,7 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
   }, [value]);
 
   return (
-    <div className="code-editor-container">
+    <div className={`code-editor-container ${softWrap ? 'is-soft-wrap' : ''}`}>
       <div className="line-numbers-container" ref={lineNumbersRef}>
         {Array.from({ length: lineCount }).map((_, index) => (
           <div key={index} className="line-number">
@@ -187,7 +189,7 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
         ))}
       </div>
       <div className="code-editor-main">
-        {value && (
+        {value && language !== 'plain' && (
           <pre className="code-editor-highlight" ref={highlightRef} aria-hidden="true">
             {renderHighlightedCode(value)}
           </pre>
@@ -201,7 +203,8 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
           placeholder={placeholder}
           readOnly={readOnly}
           spellCheck={false}
-        className={`code-editor-textarea ${value ? 'has-highlight' : ''}`}
+          wrap={softWrap ? 'soft' : 'off'}
+        className={`code-editor-textarea ${value && language !== 'plain' ? 'has-highlight' : ''}`}
         style={{
           resize: 'none',
           tabSize: tabSize === 'tab' ? 4 : Number(tabSize),

@@ -81,6 +81,18 @@
   overflow-x: auto;
 }
 
+.code-editor-container.is-soft-wrap .code-editor-highlight,
+.code-editor-container.is-soft-wrap .code-editor-textarea {
+  white-space: pre-wrap !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  word-wrap: break-word !important;
+}
+
+.code-editor-container.is-soft-wrap .code-editor-textarea {
+  overflow-x: hidden !important;
+}
+
 .code-editor-textarea.has-highlight {
   color: transparent !important;
   caret-color: var(--text-primary);

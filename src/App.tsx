@@ -6,6 +6,7 @@ import { UuidGenerator } from './components/tools/UuidGenerator';
 import { JwtTool } from './components/tools/JwtTool';
 import { SqlTool } from './components/tools/SqlTool';
 import { HashGenerator } from './components/tools/HashGenerator';
+import { EncryptTool } from './components/tools/EncryptTool';
 
 function App() {
   const currentRoute = useHashRoute('formatter');
@@ -18,6 +19,7 @@ function App() {
       {currentRoute === 'jwt' && <JwtTool />}
       {currentRoute === 'sql' && <SqlTool />}
       {currentRoute === 'hash' && <HashGenerator />}
+      {currentRoute === 'encrypt' && <EncryptTool />}
     </Layout>
   );
 }
