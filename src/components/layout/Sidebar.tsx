@@ -301,6 +301,34 @@ export function Sidebar({ currentRoute }: SidebarProps) {
               </div>
             </a>
           </li>
+          <li>
+            <a
+              href="#/json-to-ts"
+              className={`nav-item ${currentRoute === 'json-to-ts' ? 'is-active' : ''}`}
+              title="JSON to TS"
+            >
+              <div className="nav-icon">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <path d="M12 8h2v8h-2z"></path>
+                  <path d="M8 8h6"></path>
+                  <path d="M9 12h5"></path>
+                </svg>
+              </div>
+              <div className="nav-text">
+                <span className="nav-title">JSON to TS</span>
+                <span className="nav-desc">TypeScript Interface</span>
+              </div>
+            </a>
+          </li>
         </ul>
       </nav>
       

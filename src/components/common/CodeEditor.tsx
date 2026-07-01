@@ -6,7 +6,7 @@ interface CodeEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   readOnly?: boolean;
-  language?: 'json' | 'sql' | 'go' | 'plain';
+  language?: 'json' | 'sql' | 'go' | 'typescript' | 'plain';
   softWrap?: boolean;
   tabSize?: number | string;
 }
@@ -179,9 +179,59 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
     return nodes;
   };
 
+  const renderHighlightedTs = (source: string) => {
+    const tsKeywords = [
+      'export', 'interface', 'type', 'readonly', 'extends', 'implements',
+      'class', 'import', 'from', 'const', 'let', 'function', 'declare', 'module',
+      'string', 'number', 'boolean', 'any', 'unknown', 'never', 'void', 'null', 'undefined'
+    ];
+    const tokenPattern = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`)|(\b\d+(?:\.\d+)?\b)|([{}*\[\](),.:?;])|\b([A-Za-z_][A-Za-z0-9_]*)\b/gm;
+    const nodes: React.ReactNode[] = [];
+    let cursor = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = tokenPattern.exec(source)) !== null) {
+      if (match.index > cursor) {
+        nodes.push(source.slice(cursor, match.index));
+      }
+
+      const [token, commentToken, stringToken, numberToken, punctuationToken, wordToken] = match;
+
+      if (commentToken) {
+        nodes.push(<span key={`${match.index}-ts-comment`} className="ts-token-comment">{commentToken}</span>);
+      } else if (stringToken) {
+        nodes.push(<span key={`${match.index}-ts-string`} className="ts-token-string">{stringToken}</span>);
+      } else if (numberToken) {
+        nodes.push(<span key={`${match.index}-ts-number`} className="ts-token-number">{numberToken}</span>);
+      } else if (punctuationToken) {
+        nodes.push(<span key={`${match.index}-ts-punctuation`} className="ts-token-punctuation">{punctuationToken}</span>);
+      } else if (wordToken) {
+        if (tsKeywords.includes(wordToken)) {
+          nodes.push(<span key={`${match.index}-ts-keyword`} className="ts-token-keyword">{wordToken}</span>);
+        } else {
+          const isCapitalized = wordToken[0] === wordToken[0].toUpperCase();
+          nodes.push(
+            <span key={`${match.index}-ts-identifier`} className={isCapitalized ? 'ts-token-type' : 'ts-token-identifier'}>
+              {wordToken}
+            </span>,
+          );
+        }
+      }
+
+      cursor = match.index + token.length;
+    }
+
+    if (cursor < source.length) {
+      nodes.push(source.slice(cursor));
+    }
+
+    return nodes;
+  };
+
   const renderHighlightedCode = (source: string) => {
     if (language === 'sql') return renderHighlightedSql(source);
     if (language === 'go') return renderHighlightedGo(source);
+    if (language === 'typescript') return renderHighlightedTs(source);
     if (language === 'plain') return source;
     return renderHighlightedJson(source);
   };

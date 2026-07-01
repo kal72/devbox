@@ -252,3 +252,50 @@
 :root.theme-dark .go-token-number {
   color: #fbbf24;
 }
+
+.ts-token-keyword {
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+.ts-token-type {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.ts-token-string {
+  color: #0f766e;
+}
+
+.ts-token-number {
+  color: #b45309;
+}
+
+.ts-token-punctuation {
+  color: var(--text-muted);
+}
+
+.ts-token-comment {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.ts-token-identifier {
+  color: var(--text-primary);
+}
+
+:root.theme-dark .ts-token-keyword {
+  color: #c4b5fd;
+}
+
+:root.theme-dark .ts-token-type {
+  color: #93c5fd;
+}
+
+:root.theme-dark .ts-token-string {
+  color: #5eead4;
+}
+
+:root.theme-dark .ts-token-number {
+  color: #fbbf24;
+}

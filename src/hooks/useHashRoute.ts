@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export type Route = 'formatter' | 'table' | 'uuid' | 'jwt' | 'sql' | 'hash' | 'encrypt' | 'base64' | 'sql-gorm' | 'json-to-go';
+export type Route = 'formatter' | 'table' | 'uuid' | 'jwt' | 'sql' | 'hash' | 'encrypt' | 'base64' | 'sql-gorm' | 'json-to-go' | 'json-to-ts';
 
 export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
   const getRouteFromHash = (): Route => {
@@ -34,6 +34,9 @@ export function useHashRoute(defaultRoute: Route = 'formatter'): Route {
     }
     if (hash === '#/json-to-go' || hash === '#json-to-go') {
       return 'json-to-go';
+    }
+    if (hash === '#/json-to-ts' || hash === '#json-to-ts') {
+      return 'json-to-ts';
     }
     return defaultRoute;
   };
