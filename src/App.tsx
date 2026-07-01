@@ -9,6 +9,8 @@ import { HashGenerator } from './components/tools/HashGenerator';
 import { EncryptTool } from './components/tools/EncryptTool';
 import { Base64Tool } from './components/tools/Base64Tool';
 import { SqlGormTool } from './components/tools/SqlGormTool';
+import { JsonToGo } from './components/tools/JsonToGo';
+import { JsonToTs } from './components/tools/JsonToTs';
 
 function App() {
   const currentRoute = useHashRoute('formatter');
@@ -24,6 +26,8 @@ function App() {
       {currentRoute === 'encrypt' && <EncryptTool />}
       {currentRoute === 'base64' && <Base64Tool />}
       {currentRoute === 'sql-gorm' && <SqlGormTool />}
+      {currentRoute === 'json-to-go' && <JsonToGo />}
+      {currentRoute === 'json-to-ts' && <JsonToTs />}
     </Layout>
   );
 }

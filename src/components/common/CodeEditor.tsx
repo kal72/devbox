@@ -6,7 +6,7 @@ interface CodeEditorProps {
   onChange: (value: string) => void;
   placeholder?: string;
   readOnly?: boolean;
-  language?: 'json' | 'sql' | 'plain';
+  language?: 'json' | 'sql' | 'go' | 'typescript' | 'plain';
   softWrap?: boolean;
   tabSize?: number | string;
 }
@@ -124,6 +124,103 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
       cursor = match.index + token.length;
     }
 
+    return nodes;
+  };
+
+  const renderHighlightedGo = (source: string) => {
+    const goKeywords = [
+      'package', 'import', 'type', 'struct', 'interface', 'func', 'return',
+      'string', 'int', 'int8', 'int16', 'int32', 'int64',
+      'uint', 'uint8', 'uint16', 'uint32', 'uint64', 'uintptr',
+      'float32', 'float64', 'bool', 'byte', 'rune', 'any', 'map', 'chan', 'var', 'const'
+    ];
+    const tokenPattern = /(\/\/.*$|\/\*[\s\S]*?\*\/)|(`[^`]*`)|("(?:\\.|[^"\\])*")|(\b\d+(?:\.\d+)?\b)|([{}*\[\](),.:])|\b([A-Za-z_][A-Za-z0-9_]*)\b/gm;
+    const nodes: React.ReactNode[] = [];
+    let cursor = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = tokenPattern.exec(source)) !== null) {
+      if (match.index > cursor) {
+        nodes.push(source.slice(cursor, match.index));
+      }
+
+      const [token, commentToken, tagToken, stringToken, numberToken, punctuationToken, wordToken] = match;
+
+      if (commentToken) {
+        nodes.push(<span key={`${match.index}-go-comment`} className="go-token-comment">{commentToken}</span>);
+      } else if (tagToken) {
+        nodes.push(<span key={`${match.index}-go-tag`} className="go-token-tag">{tagToken}</span>);
+      } else if (stringToken) {
+        nodes.push(<span key={`${match.index}-go-string`} className="go-token-string">{stringToken}</span>);
+      } else if (numberToken) {
+        nodes.push(<span key={`${match.index}-go-number`} className="go-token-number">{numberToken}</span>);
+      } else if (punctuationToken) {
+        nodes.push(<span key={`${match.index}-go-punctuation`} className="go-token-punctuation">{punctuationToken}</span>);
+      } else if (wordToken) {
+        if (goKeywords.includes(wordToken)) {
+          nodes.push(<span key={`${match.index}-go-keyword`} className="go-token-keyword">{wordToken}</span>);
+        } else {
+          const isCapitalized = wordToken[0] === wordToken[0].toUpperCase();
+          nodes.push(
+            <span key={`${match.index}-go-identifier`} className={isCapitalized ? 'go-token-type' : 'go-token-identifier'}>
+              {wordToken}
+            </span>,
+          );
+        }
+      }
+
+      cursor = match.index + token.length;
+    }
+
+    if (cursor < source.length) {
+      nodes.push(source.slice(cursor));
+    }
+
+    return nodes;
+  };
+
+  const renderHighlightedTs = (source: string) => {
+    const tsKeywords = [
+      'export', 'interface', 'type', 'readonly', 'extends', 'implements',
+      'class', 'import', 'from', 'const', 'let', 'function', 'declare', 'module',
+      'string', 'number', 'boolean', 'any', 'unknown', 'never', 'void', 'null', 'undefined'
+    ];
+    const tokenPattern = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`[^`]*`)|(\b\d+(?:\.\d+)?\b)|([{}*\[\](),.:?;])|\b([A-Za-z_][A-Za-z0-9_]*)\b/gm;
+    const nodes: React.ReactNode[] = [];
+    let cursor = 0;
+    let match: RegExpExecArray | null;
+
+    while ((match = tokenPattern.exec(source)) !== null) {
+      if (match.index > cursor) {
+        nodes.push(source.slice(cursor, match.index));
+      }
+
+      const [token, commentToken, stringToken, numberToken, punctuationToken, wordToken] = match;
+
+      if (commentToken) {
+        nodes.push(<span key={`${match.index}-ts-comment`} className="ts-token-comment">{commentToken}</span>);
+      } else if (stringToken) {
+        nodes.push(<span key={`${match.index}-ts-string`} className="ts-token-string">{stringToken}</span>);
+      } else if (numberToken) {
+        nodes.push(<span key={`${match.index}-ts-number`} className="ts-token-number">{numberToken}</span>);
+      } else if (punctuationToken) {
+        nodes.push(<span key={`${match.index}-ts-punctuation`} className="ts-token-punctuation">{punctuationToken}</span>);
+      } else if (wordToken) {
+        if (tsKeywords.includes(wordToken)) {
+          nodes.push(<span key={`${match.index}-ts-keyword`} className="ts-token-keyword">{wordToken}</span>);
+        } else {
+          const isCapitalized = wordToken[0] === wordToken[0].toUpperCase();
+          nodes.push(
+            <span key={`${match.index}-ts-identifier`} className={isCapitalized ? 'ts-token-type' : 'ts-token-identifier'}>
+              {wordToken}
+            </span>,
+          );
+        }
+      }
+
+      cursor = match.index + token.length;
+    }
+
     if (cursor < source.length) {
       nodes.push(source.slice(cursor));
     }
@@ -133,6 +230,8 @@ export function CodeEditor({ value, onChange, placeholder, readOnly = false, lan
 
   const renderHighlightedCode = (source: string) => {
     if (language === 'sql') return renderHighlightedSql(source);
+    if (language === 'go') return renderHighlightedGo(source);
+    if (language === 'typescript') return renderHighlightedTs(source);
     if (language === 'plain') return source;
     return renderHighlightedJson(source);
   };

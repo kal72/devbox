@@ -3,11 +3,11 @@ import { CodeEditor } from '../common/CodeEditor';
 import './JsonFormatter.css';
 
 export function JsonFormatter() {
-  const [inputJson, setInputJson] = useState('');
-  const [outputJson, setOutputJson] = useState('');
+  const [json, setJson] = useState('');
   const [indentSize, setIndentSize] = useState<number | string>(2);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [errorLine, setErrorLine] = useState<number | null>(null);
+  const [isLooseFormatted, setIsLooseFormatted] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const [stats, setStats] = useState({
     lines: 0,
@@ -151,20 +151,19 @@ export function JsonFormatter() {
     }
   };
 
-  // Run stats on output
+  // Run stats on json content
   useEffect(() => {
-    const jsonStr = outputJson || inputJson;
-    if (!jsonStr.trim()) {
+    if (!json.trim()) {
       setStats({ lines: 0, sizeBytes: 0, keys: 0 });
       return;
     }
 
-    const lines = jsonStr.split('\n').length;
-    const size = getByteSize(jsonStr);
+    const lines = json.split('\n').length;
+    const size = getByteSize(json);
     
     let keysCount = 0;
     try {
-      const parsed = JSON.parse(jsonStr);
+      const parsed = JSON.parse(json);
       const countKeys = (obj: any): number => {
         if (typeof obj !== 'object' || obj === null) return 0;
         let count = 0;
@@ -191,46 +190,49 @@ export function JsonFormatter() {
       sizeBytes: size,
       keys: keysCount,
     });
-  }, [inputJson, outputJson]);
+  }, [json]);
 
   const handleFormat = () => {
-    if (!inputJson.trim()) return;
+    if (!json.trim()) return;
     try {
-      const parsed = JSON.parse(inputJson);
+      const parsed = JSON.parse(json);
       const formatted = JSON.stringify(parsed, null, getFormatSpacing() as any);
-      setOutputJson(formatted);
+      setJson(formatted);
       setValidationError(null);
       setErrorLine(null);
+      setIsLooseFormatted(false);
     } catch (err: any) {
-      const looseFormatted = looseFormatJson(inputJson);
-      setOutputJson(looseFormatted);
-      setJsonError(inputJson, err.message);
+      const looseFormatted = looseFormatJson(json);
+      setJsonError(json, err.message);
+      setJson(looseFormatted);
+      setIsLooseFormatted(true);
     }
   };
 
   const handleMinify = () => {
-    if (!inputJson.trim()) return;
+    if (!json.trim()) return;
     try {
-      const parsed = JSON.parse(inputJson);
+      const parsed = JSON.parse(json);
       const minified = JSON.stringify(parsed);
-      setOutputJson(minified);
+      setJson(minified);
       setValidationError(null);
       setErrorLine(null);
+      setIsLooseFormatted(false);
     } catch (err: any) {
-      validateJson(inputJson);
+      validateJson(json);
     }
   };
 
   const handleClear = () => {
-    setInputJson('');
-    setOutputJson('');
+    setJson('');
     setValidationError(null);
     setErrorLine(null);
+    setIsLooseFormatted(false);
     setCopyStatus('idle');
   };
 
   const handleCopy = () => {
-    const textToCopy = outputJson || inputJson;
+    const textToCopy = json;
     if (!textToCopy) return;
 
     const showStatus = (status: 'copied' | 'failed') => {
@@ -239,8 +241,7 @@ export function JsonFormatter() {
     };
 
     const selectVisibleText = () => {
-      const selector = outputJson ? '.output-panel textarea' : '.input-panel textarea';
-      const textarea = document.querySelector<HTMLTextAreaElement>(selector);
+      const textarea = document.querySelector<HTMLTextAreaElement>('.panel-body textarea');
       if (!textarea) return;
       textarea.focus();
       textarea.select();
@@ -297,6 +298,30 @@ export function JsonFormatter() {
     }
   };
 
+  const handleLoadExample = () => {
+    const exampleJson = {
+      name: "John Doe",
+      age: 30,
+      email: "john.doe@example.com",
+      isDeveloper: true,
+      skills: ["JavaScript", "TypeScript", "React", "Node.js"],
+      address: {
+        street: "123 Main St",
+        city: "San Francisco",
+        state: "CA",
+        zip: "94105"
+      },
+      projects: [
+        { name: "Devbox", status: "active" },
+        { name: "Website", status: "completed" }
+      ]
+    };
+    setJson(JSON.stringify(exampleJson, null, getFormatSpacing() as any));
+    setValidationError(null);
+    setErrorLine(null);
+    setIsLooseFormatted(false);
+  };
+
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     return `${(bytes / 1024).toFixed(2)} KB`;
@@ -332,13 +357,16 @@ export function JsonFormatter() {
         </div>
 
         <div className="toolbar-section gap-sm">
+          <button onClick={handleLoadExample} className="btn btn-secondary" title="Load example JSON content">
+            Example
+          </button>
           <button onClick={handleFormat} className="btn btn-primary" title="Format valid JSON, or loosely format invalid JSON for readability">
             Format
           </button>
           <button onClick={handleMinify} className="btn btn-secondary" title="Remove all whitespace">
             Minify
           </button>
-          <button onClick={() => validateJson(inputJson)} className="btn btn-secondary" title="Validate JSON syntax">
+          <button onClick={() => validateJson(json)} className="btn btn-secondary" title="Validate JSON syntax">
             Validate
           </button>
           <button
@@ -349,7 +377,7 @@ export function JsonFormatter() {
             }}
             onKeyDown={handleCopyKeyDown}
             className="btn btn-secondary"
-            disabled={!outputJson && !inputJson}
+            disabled={!json}
             title="Copy result to clipboard"
           >
             Copy
@@ -361,14 +389,14 @@ export function JsonFormatter() {
       </div>
 
       <div className="formatter-panels">
-        {/* Input Panel */}
-        <div className="panel input-panel">
+        {/* Editor Panel */}
+        <div className="panel editor-panel">
           <div className="panel-header">
             <div>
-              <h3>Input</h3>
-              <p>Paste JSON source</p>
+              <h3>JSON Editor</h3>
+              <p>Type, paste, or format JSON</p>
             </div>
-            {inputJson.trim() && (
+            {json.trim() && (
               <span className={`status-badge ${validationError ? 'is-invalid' : 'is-valid'}`}>
                 {validationError ? 'Invalid JSON' : 'Valid JSON'}
               </span>
@@ -376,9 +404,10 @@ export function JsonFormatter() {
           </div>
           <div className="panel-body">
             <CodeEditor
-              value={inputJson}
+              value={json}
               onChange={(val) => {
-                setInputJson(val);
+                setJson(val);
+                setIsLooseFormatted(false);
                 // Clear validation error when editing
                 if (validationError) {
                   setValidationError(null);
@@ -389,75 +418,42 @@ export function JsonFormatter() {
             />
           </div>
         </div>
-
-        {/* Output Panel */}
-        <div className="panel output-panel">
-          <div className="panel-header">
-            <div>
-              <h3>Output</h3>
-              <p>Formatted or loose result</p>
-            </div>
-            {outputJson && (
-              <button
-                type="button"
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                  handleCopy();
-                }}
-                onKeyDown={handleCopyKeyDown}
-                className="btn-text-copy"
-              >
-                Copy
-              </button>
-            )}
-          </div>
-          <div className="panel-body">
-            <CodeEditor
-              value={outputJson}
-              onChange={() => {}}
-              placeholder="Output will be shown here..."
-              readOnly={true}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Validation and Statistics Status Footer */}
-      {(validationError || stats.lines > 0) && (
-        <div className="formatter-footer">
-          {validationError ? (
-            <div className="status-message error-message">
-              <span className="error-icon">⚠️</span>
-              <div className="error-details">
-                <strong>Syntax Error:</strong> {validationError}
-                {errorLine && <span className="error-line-badge">Line {errorLine}</span>}
-                {outputJson && <span className="loose-format-badge">Loosely formatted</span>}
-              </div>
+      <div className="formatter-footer">
+        {validationError ? (
+          <div className="status-message error-message">
+            <span className="error-icon">⚠️</span>
+            <div className="error-details">
+              <strong>Syntax Error:</strong> {validationError}
+              {errorLine && <span className="error-line-badge">Line {errorLine}</span>}
+              {isLooseFormatted && <span className="loose-format-badge">Loosely formatted</span>}
             </div>
-          ) : (
-            stats.lines > 0 && (
-              <div className="status-message success-message">
-                <span className="success-icon">✓</span>
-                <span>JSON valid and ready.</span>
-              </div>
-            )
-          )}
+          </div>
+        ) : json.trim() ? (
+          <div className="status-message success-message">
+            <span className="success-icon">✓</span>
+            <span>JSON valid and ready.</span>
+          </div>
+        ) : (
+          <div className="status-message" style={{ color: 'var(--text-muted)' }}>
+            <span>Ready. Input JSON to format.</span>
+          </div>
+        )}
 
-          {stats.lines > 0 && (
-            <div className="stats-container">
-              <span className="stat-item"><strong>Size:</strong> {formatSize(stats.sizeBytes)}</span>
-              <span className="stat-item"><strong>Lines:</strong> {stats.lines}</span>
-              <span className="stat-item"><strong>Keys/Nodes:</strong> {stats.keys}</span>
-            </div>
-          )}
-
-          {copyStatus !== 'idle' && (
-            <div className={`copy-status-message ${copyStatus === 'failed' ? 'is-failed' : ''}`} role="status" aria-live="polite">
-              {copyStatus === 'copied' ? 'Copied to clipboard' : 'Clipboard blocked. Text selected, press Cmd/Ctrl+C.'}
-            </div>
-          )}
+        <div className="stats-container">
+          <span className="stat-item"><strong>Size:</strong> {formatSize(stats.sizeBytes)}</span>
+          <span className="stat-item"><strong>Lines:</strong> {stats.lines}</span>
+          <span className="stat-item"><strong>Keys/Nodes:</strong> {stats.keys}</span>
         </div>
-      )}
+
+        {copyStatus !== 'idle' && (
+          <div className={`copy-status-message ${copyStatus === 'failed' ? 'is-failed' : ''}`} role="status" aria-live="polite">
+            {copyStatus === 'copied' ? 'Copied to clipboard' : 'Clipboard blocked. Text selected, press Cmd/Ctrl+C.'}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

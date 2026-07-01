@@ -3,7 +3,7 @@ import { CodeEditor } from '../common/CodeEditor';
 import './EncryptTool.css';
 
 type EncryptMode = 'encrypt' | 'decrypt';
-type EncryptAlgorithm = 'AES-CBC' | 'RSA-OAEP';
+type EncryptAlgorithm = 'AES-CBC' | 'AES-GCM' | 'RSA-OAEP';
 type AesKeySize = 128 | 192 | 256;
 type CopyStatus = 'idle' | 'copied' | 'failed';
 
@@ -41,10 +41,10 @@ const pemToArrayBuffer = (pem: string) => {
   return base64ToArrayBuffer(base64);
 };
 
-const deriveAesKey = async (secret: string, keySize: AesKeySize) => {
+const deriveAesKey = async (secret: string, keySize: AesKeySize, algoName: 'AES-CBC' | 'AES-GCM') => {
   const digest = await crypto.subtle.digest('SHA-512', encoder.encode(secret));
   const keyBytes = new Uint8Array(digest).slice(0, keySize / 8);
-  return crypto.subtle.importKey('raw', keyBytes, { name: 'AES-CBC' }, false, ['encrypt', 'decrypt']);
+  return crypto.subtle.importKey('raw', keyBytes, { name: algoName }, false, ['encrypt', 'decrypt']);
 };
 
 const importRsaPublicKey = (pem: string) => crypto.subtle.importKey(
@@ -76,19 +76,21 @@ export function EncryptTool() {
   const [outputText, setOutputText] = useState('');
   const [status, setStatus] = useState<{ type: 'success' | 'error' | 'warning'; message: string } | null>({
     type: 'warning',
-    message: 'AES-CBC uses Secret Key and IV. RSA-OAEP uses public/private PEM keys.',
+    message: 'AES-CBC/GCM use Secret Key and IV. RSA-OAEP uses public/private PEM keys.',
   });
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle');
 
   const handleAesEncrypt = async () => {
     try {
       if (!secret) throw new Error('Secret key is required.');
-      const iv = crypto.getRandomValues(new Uint8Array(16));
-      const key = await deriveAesKey(secret, keySize);
-      const encrypted = await crypto.subtle.encrypt({ name: 'AES-CBC', iv }, key, encoder.encode(inputText));
+      const isGcm = algorithm === 'AES-GCM';
+      const ivLength = isGcm ? 12 : 16;
+      const iv = crypto.getRandomValues(new Uint8Array(ivLength));
+      const key = await deriveAesKey(secret, keySize, algorithm as 'AES-CBC' | 'AES-GCM');
+      const encrypted = await crypto.subtle.encrypt({ name: algorithm, iv }, key, encoder.encode(inputText));
       setIvText(bytesToBase64(iv));
       setOutputText(bytesToBase64(new Uint8Array(encrypted)));
-      setStatus({ type: 'success', message: `Text encrypted with AES-${keySize}-CBC. Keep the IV for decrypt.` });
+      setStatus({ type: 'success', message: `Text encrypted with ${algorithm} (${keySize}-bit). Keep the IV for decrypt.` });
       setCopyStatus('idle');
     } catch (err: any) {
       setStatus({ type: 'error', message: `Encrypt failed: ${err.message}` });
@@ -98,17 +100,21 @@ export function EncryptTool() {
   const handleAesDecrypt = async () => {
     try {
       if (!secret) throw new Error('Secret key is required.');
-      if (!ivText.trim()) throw new Error('IV is required for AES-CBC decrypt.');
+      if (!ivText.trim()) throw new Error(`IV is required for ${algorithm} decrypt.`);
       const iv = base64ToBytes(ivText.trim());
-      if (iv.length !== 16) throw new Error('IV must be a 16-byte Base64 value.');
-      const key = await deriveAesKey(secret, keySize);
+      const isGcm = algorithm === 'AES-GCM';
+      const expectedIvLength = isGcm ? 12 : 16;
+      if (iv.length !== expectedIvLength) {
+        throw new Error(`IV must be a ${expectedIvLength}-byte Base64 value.`);
+      }
+      const key = await deriveAesKey(secret, keySize, algorithm as 'AES-CBC' | 'AES-GCM');
       const decrypted = await crypto.subtle.decrypt(
-        { name: 'AES-CBC', iv },
+        { name: algorithm, iv },
         key,
         base64ToBytes(inputText.trim()),
       );
       setOutputText(decoder.decode(decrypted));
-      setStatus({ type: 'success', message: `Ciphertext decrypted with AES-${keySize}-CBC.` });
+      setStatus({ type: 'success', message: `Ciphertext decrypted with ${algorithm} (${keySize}-bit).` });
       setCopyStatus('idle');
     } catch (err: any) {
       setStatus({ type: 'error', message: `Decrypt failed: ${err.message}` });
@@ -195,9 +201,10 @@ export function EncryptTool() {
 
   const activeRsaKey = mode === 'encrypt' ? rsaPublicKey : rsaPrivateKey;
   const setActiveRsaKey = mode === 'encrypt' ? setRsaPublicKey : setRsaPrivateKey;
+  const isAes = algorithm.startsWith('AES');
   const runLabel = mode === 'encrypt'
-    ? `Encrypt ${algorithm === 'AES-CBC' ? 'AES' : 'RSA'}`
-    : `Decrypt ${algorithm === 'AES-CBC' ? 'AES' : 'RSA'}`;
+    ? `Encrypt ${isAes ? 'AES' : 'RSA'}`
+    : `Decrypt ${isAes ? 'AES' : 'RSA'}`;
   const textToCopy = outputText || inputText;
 
   const handleCopy = () => {
@@ -264,7 +271,7 @@ export function EncryptTool() {
         <div>
           <p className="tool-kicker">Crypto Utility</p>
           <h1>Crypto Tool</h1>
-          <p>Encrypt and decrypt text payloads with AES-CBC or RSA-OAEP.</p>
+          <p>Encrypt and decrypt text payloads with AES-CBC, AES-GCM, or RSA-OAEP.</p>
         </div>
       </div>
 
@@ -273,6 +280,7 @@ export function EncryptTool() {
           Algorithm
           <select value={algorithm} onChange={(event) => setAlgorithm(event.target.value as EncryptAlgorithm)}>
             <option value="AES-CBC">AES-CBC</option>
+            <option value="AES-GCM">AES-GCM</option>
             <option value="RSA-OAEP">RSA-OAEP</option>
           </select>
         </label>
@@ -291,7 +299,7 @@ export function EncryptTool() {
       </div>
 
       <div className="encrypt-config-card">
-        {algorithm === 'AES-CBC' ? (
+        {algorithm.startsWith('AES') ? (
           <div className="encrypt-options">
             <label>
               Key size
