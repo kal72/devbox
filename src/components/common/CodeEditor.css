@@ -197,3 +197,58 @@
 .line-numbers-container::-webkit-scrollbar {
   display: none;
 }
+
+.go-token-keyword {
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+.go-token-type {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.go-token-string {
+  color: #0f766e;
+}
+
+.go-token-tag {
+  color: #b45309;
+}
+
+.go-token-number {
+  color: #b45309;
+}
+
+.go-token-punctuation {
+  color: var(--text-muted);
+}
+
+.go-token-comment {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.go-token-identifier {
+  color: var(--text-primary);
+}
+
+:root.theme-dark .go-token-keyword {
+  color: #c4b5fd;
+}
+
+:root.theme-dark .go-token-type {
+  color: #93c5fd;
+}
+
+:root.theme-dark .go-token-string {
+  color: #5eead4;
+}
+
+:root.theme-dark .go-token-tag {
+  color: #fbbf24;
+}
+
+:root.theme-dark .go-token-number {
+  color: #fbbf24;
+}

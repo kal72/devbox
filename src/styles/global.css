@@ -64,7 +64,7 @@ button {
   font-family: inherit;
 }
 
-input, textarea, select {
+input:not([type="checkbox"]):not([type="radio"]), textarea, select {
   font-family: inherit;
   border: 1px solid var(--border-primary);
   background-color: var(--bg-secondary);
@@ -74,10 +74,19 @@ input, textarea, select {
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-input:focus, textarea:focus, select:focus {
+input:not([type="checkbox"]):not([type="radio"]):focus, textarea:focus, select:focus {
   outline: none;
   border-color: var(--accent-violet);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+input[type="checkbox"], input[type="radio"] {
+  cursor: pointer;
+  accent-color: var(--accent-violet);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  vertical-align: middle;
 }
 
 /* Accessibility */
