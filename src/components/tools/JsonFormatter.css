@@ -163,7 +163,7 @@
 /* Formatter Panels Layout */
 .formatter-panels {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: var(--space-lg);
   flex: 1;
   min-height: 360px;
